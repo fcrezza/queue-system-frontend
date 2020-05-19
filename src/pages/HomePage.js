@@ -55,25 +55,25 @@ const ButtonContainer = styled.div`
   }
 `
 
-function homepage() {
+function HomePage() {
   return (
     <Container>
-      <Link to="#sign-up">Daftar</Link>
+      <Link to="/signup">Daftar</Link>
       <IlustrationImg src={ilustration} alt="" />
       <Title>Bimbingan tidak perlu ribet</Title>
       <Subtitle>
         Mulai bimbingan dengan sekali tap melalui layar ponselmu
       </Subtitle>
       <ButtonContainer>
-        <ButtonOutline as={BaseLink} to="#login-dosen">
-          Masuk sebagai dosen
+        <ButtonOutline as={BaseLink} to="/login/dosen">
+          Login sebagai dosen
         </ButtonOutline>
-        <ButtonBlock as={BaseLink} to="#login-mahasiswa">
-          Masuk sebagai mahasiswa
+        <ButtonBlock as={BaseLink} to="/login/mahasiswa">
+          Login sebagai mahasiswa
         </ButtonBlock>
       </ButtonContainer>
     </Container>
   )
 }
 
-export default homepage
+export default HomePage

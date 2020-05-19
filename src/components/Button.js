@@ -1,4 +1,8 @@
+import React from 'react'
 import styled from 'styled-components'
+import {Link} from 'react-router-dom'
+
+import backArrowImg from '../images/back-arrow.svg'
 
 export const Button = styled.button`
   background: #000;
@@ -15,3 +19,16 @@ export const Button = styled.button`
 export const ButtonBlock = styled(Button)`
   width: 100%;
 `
+
+const Back = styled(Link)`
+  text-decoration: none;
+  outline: none;
+`
+
+export function BackButton({to}) {
+  return (
+    <Back to={to}>
+      <img src={backArrowImg} alt="" />
+    </Back>
+  )
+}

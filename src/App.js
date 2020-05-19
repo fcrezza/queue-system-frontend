@@ -3,7 +3,8 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import {createGlobalStyle} from 'styled-components'
 import 'typeface-montserrat'
 
-import homepage from './pages/homepage'
+import HomePage from './pages/HomePage'
+import LoginPage from './pages/LoginPage'
 
 const GlobalStyle = createGlobalStyle`
 	*,
@@ -27,7 +28,8 @@ function App() {
       <GlobalStyle />
       <Router>
         <Switch>
-          <Route exact path="/" component={homepage} />
+          <Route exact path="/" component={HomePage} />
+          <Route path="/login" component={LoginPage} />
         </Switch>
       </Router>
     </>
