@@ -6,6 +6,7 @@ import 'typeface-montserrat'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
+import SignupVerification from './pages/SignupVerification'
 
 const GlobalStyle = createGlobalStyle`
 	*,
@@ -31,6 +32,11 @@ function App() {
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route exact path="/signup" component={SignupPage} />
+          <Route
+            exact
+            path="/signup-verification"
+            component={SignupVerification}
+          />
           <Route path="/login" component={LoginPage} />
         </Switch>
       </Router>
