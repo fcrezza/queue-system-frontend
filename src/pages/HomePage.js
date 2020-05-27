@@ -15,18 +15,9 @@ const IlustrationImg = styled.img`
   margin-top: 9rem;
 `
 
-const BaseLink = styled(RouterLink)`
+const Link = styled(RouterLink)`
   text-decoration: none;
   outline: none;
-`
-
-const Link = styled(BaseLink)`
-  font-weight: 700;
-  font-size: 1.6rem;
-  color: #000;
-  position: absolute;
-  top: 3rem;
-  right: 2rem;
 `
 
 const Title = styled.h1`
@@ -43,8 +34,8 @@ const Subtitle = styled.p`
 
 const ButtonOutline = styled(ButtonBlock)`
   background: none;
-  border: 1px solid #000;
-  color: #000;
+  border: 1px solid #222;
+  color: #222;
 `
 
 const ButtonContainer = styled.div`
@@ -58,18 +49,17 @@ const ButtonContainer = styled.div`
 function HomePage() {
   return (
     <Container>
-      <Link to="/signup">Daftar</Link>
       <IlustrationImg src={ilustration} alt="" />
       <Title>Bimbingan tidak perlu ribet</Title>
       <Subtitle>
         Mulai bimbingan dengan sekali tap melalui layar ponselmu
       </Subtitle>
       <ButtonContainer>
-        <ButtonOutline as={BaseLink} to="/login/dosen">
-          Login sebagai dosen
+        <ButtonOutline as={Link} to="/signup">
+          Daftar
         </ButtonOutline>
-        <ButtonBlock as={BaseLink} to="/login/mahasiswa">
-          Login sebagai mahasiswa
+        <ButtonBlock as={Link} to="/login">
+          Masuk
         </ButtonBlock>
       </ButtonContainer>
     </Container>

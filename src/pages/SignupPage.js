@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import Input from '../components/Input'
 import {ButtonBlock, BackButton} from '../components/Button'
+import {RadioContainer, Radio} from '../components/Radio'
 
 const Container = styled.div`
   padding: 3rem 2rem;
@@ -10,7 +11,7 @@ const Container = styled.div`
 
 const Form = styled.form`
   & > * {
-    margin-bottom: 4rem;
+    margin-bottom: 3.5rem;
   }
 `
 
@@ -20,7 +21,7 @@ const FormWrapper = styled.div`
 
 const Title = styled.h1`
   font-size: 3rem;
-  margin: 0 0 2rem;
+  margin: 0 0 3rem;
 `
 
 const ErrorMessage = styled.p`
@@ -36,6 +37,10 @@ function SignupPage() {
       <FormWrapper>
         <Title>Daftar sebagai</Title>
         <Form>
+          <RadioContainer>
+            <Radio id="mahasiswa" label="Mahasiswa" />
+            <Radio id="dosen" label="Dosen" />
+          </RadioContainer>
           <Input placeholder="Nomor induk mahasiswa" type="number" />
           <Input placeholder="Username" />
           <Input placeholder="Nama lengkap" />

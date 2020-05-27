@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom'
 import backArrowImg from '../images/back-arrow.svg'
 
 export const Button = styled.button`
-  background: #000;
+  background: #222;
   color: #fff;
   padding: 1.2rem 1.8rem;
   border: 0;
@@ -14,6 +14,7 @@ export const Button = styled.button`
   cursor: pointer;
   display: block;
   text-align: center;
+  font-weight: 700;
 `
 
 export const ButtonBlock = styled(Button)`

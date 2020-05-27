@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import {BackButton, Button} from '../components/Button'
+import {BackButton} from '../components/Button'
 import dosenMale1 from '../images/dosen/dosen-male-1.svg'
 
 const Container = styled.div`
@@ -62,63 +62,25 @@ const List = styled.div`
     margin: 0;
     font-size: 1.3rem;
   }
-
-  .radio-container {
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-  }
-
-  .radio-container input[type='radio'] {
-    visibility: hidden;
-  }
-
-  .check {
-    cursor: pointer;
-    display: block;
-    position: relative;
-    border: 3px solid #aaaaaa;
-    border-radius: 100%;
-    height: 25px;
-    width: 25px;
-  }
-
-  .check::before {
-    display: block;
-    content: '';
-    border-radius: 100%;
-    height: 9px;
-    width: 9px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  .radio-container input[type='radio']:checked ~ .check::before {
-    background: #222;
-  }
-
-  .radio-container input[type='radio']:checked ~ .check {
-    border-color: #222;
-  }
 `
 
-const Footer = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: #fff;
-  box-shadow: 0px -10px 10px #f0f0f0;
-  padding: 1.5rem;
-  text-align: right;
+const Button = styled.button`
+  background: transparent;
+  border: 1px solid #222;
+  color: #222;
+  font-size: 1.2rem;
+  outline: none;
+  font-weight: 700;
+  padding: 0.8rem 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: auto;
 `
 
 function SignVerification() {
   return (
     <Container>
-      <BackButton to="/signup/mahasiswa" replace />
+      <BackButton to="/signup" replace />
       <Title>Pilih dosen</Title>
       <Subtitle>
         Pilih dosen pembimbing kamu untuk dapat melakukan bimbingan
@@ -129,9 +91,6 @@ function SignVerification() {
         <DosenItem />
         <DosenItem />
       </ListContainer>
-      <Footer>
-        <Button disabled>Lanjut</Button>
-      </Footer>
     </Container>
   )
 }
@@ -146,10 +105,7 @@ function DosenItem() {
         <h3>Jahn Doe</h3>
         <p>FASTIKOM</p>
       </div>
-      <div className="radio-container">
-        <input type="radio" id="radio1" name="dosen" />
-        <label htmlFor="radio1" className="check" />
-      </div>
+      <Button>Pilih</Button>
     </List>
   )
 }

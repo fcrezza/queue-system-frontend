@@ -20,7 +20,7 @@ const GlobalStyle = createGlobalStyle`
 	body {
 		margin: 0;
 		line-height: 1.5;
-		background: #f9f9f9;
+		background: #fff;
 	}
 `
 
@@ -37,7 +37,7 @@ function App() {
             path="/signup-verification"
             component={SignupVerification}
           />
-          <Route path="/login" component={LoginPage} />
+          <Route exact path="/login" component={LoginPage} />
         </Switch>
       </Router>
     </>

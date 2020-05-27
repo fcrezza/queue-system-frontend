@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import {Switch, Route, useRouteMatch} from 'react-router-dom'
 
 import Input from '../components/Input'
+import {Radio, RadioContainer} from '../components/Radio'
 import {ButtonBlock, BackButton} from '../components/Button'
 
 const Container = styled.div`
@@ -11,7 +11,7 @@ const Container = styled.div`
 
 const Form = styled.form`
   & > * {
-    margin-bottom: 4rem;
+    margin-bottom: 3.5rem;
   }
 `
 
@@ -21,7 +21,7 @@ const FormWrapper = styled.div`
 
 const Title = styled.h1`
   font-size: 3rem;
-  margin: 0 0 2rem;
+  margin: 0 0 3rem;
 `
 
 const ErrorMessage = styled.p`
@@ -30,45 +30,23 @@ const ErrorMessage = styled.p`
   margin-top: 2rem;
 `
 
-function LoginDosen() {
-  return (
-    <FormWrapper>
-      <Title>Login dosen</Title>
-      <Form>
-        <Input placeholder="Username" />
-        <Input placeholder="Password" type="password" />
-        <ButtonBlock>Login</ButtonBlock>
-      </Form>
-      <ErrorMessage>Username dan password tidak cocok</ErrorMessage>
-    </FormWrapper>
-  )
-}
-
-function LoginMahasiswa() {
-  return (
-    <FormWrapper>
-      <Title>Login mahasiswa</Title>
-      <Form>
-        <Input placeholder="Username" />
-        <Input placeholder="Password" type="password" />
-        <ButtonBlock>Login</ButtonBlock>
-      </Form>
-      <ErrorMessage>Username dan password tidak cocok</ErrorMessage>
-    </FormWrapper>
-  )
-}
-
 function Loginpage() {
-  const {path} = useRouteMatch()
-
   return (
     <Container>
       <BackButton to="/" />
-      <Switch>
-        <Route path={`${path}/dosen`} component={LoginDosen} />
-        <Route path={`${path}/mahasiswa`} component={LoginMahasiswa} />
-        <Route render={() => <div>zonk</div>} />
-      </Switch>
+      <FormWrapper>
+        <Title>Masuk sebagai</Title>
+        <Form>
+          <RadioContainer>
+            <Radio id="mahasiswa" label="Mahasiswa" />
+            <Radio id="dosen" label="Dosen" />
+          </RadioContainer>
+          <Input placeholder="Username" />
+          <Input placeholder="Password" type="password" />
+          <ButtonBlock>Masuk</ButtonBlock>
+        </Form>
+        <ErrorMessage>Username dan password tidak cocok</ErrorMessage>
+      </FormWrapper>
     </Container>
   )
 }
