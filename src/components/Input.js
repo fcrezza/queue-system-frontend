@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {forwardRef} from 'react'
 import styled from 'styled-components'
 
 const Container = styled.div`
@@ -27,15 +27,19 @@ const Text = styled.div`
   color: #555;
 `
 
-function Input({placeholder, onChange, value, ...rest}) {
+function Input(props, ref) {
+  const {placeholder, onChange, value, name, ...rest} = props
+
   return (
     <Container>
-      <Label htmlFor="inputfield">
+      <Label htmlFor={name}>
         <Text>{placeholder}</Text>
         <InputField
-          id="inputfield"
+          id={name}
           onChange={onChange}
           value={value}
+          name={name}
+          ref={ref}
           {...rest}
         />
       </Label>
@@ -43,4 +47,4 @@ function Input({placeholder, onChange, value, ...rest}) {
   )
 }
 
-export default Input
+export default forwardRef(Input)

@@ -1,10 +1,5 @@
-import React from 'react'
+import React, {forwardRef} from 'react'
 import styled from 'styled-components'
-
-export const RadioContainer = styled.div`
-  display: flex;
-  align-items: center;
-`
 
 const RadioWrapper = styled.label`
   align-items: center;
@@ -61,14 +56,18 @@ const RadioLabel = styled.div`
   color: #333;
 `
 
-export function Radio({id, label}) {
+function Radio(props, ref) {
+  const {id, label, value} = props
+
   return (
     <RadioWrapper htmlFor={id}>
       <RadioInput>
-        <input type="radio" id={id} name="role" />
+        <input type="radio" id={id} value={value} name="role" ref={ref} />
         <div className="check" />
       </RadioInput>
       <RadioLabel>{label}</RadioLabel>
     </RadioWrapper>
   )
 }
+
+export default forwardRef(Radio)

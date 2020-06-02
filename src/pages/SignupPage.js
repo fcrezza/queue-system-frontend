@@ -2,8 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 
 import Input from '../components/Input'
+import Radio from '../components/Radio'
 import {ButtonBlock, BackButton} from '../components/Button'
-import {RadioContainer, Radio} from '../components/Radio'
 
 const Container = styled.div`
   padding: 3rem 2rem;
@@ -22,6 +22,11 @@ const FormWrapper = styled.div`
 const Title = styled.h1`
   font-size: 3rem;
   margin: 0 0 3rem;
+`
+
+const RadioContainer = styled.div`
+  display: flex;
+  align-items: center;
 `
 
 const ErrorMessage = styled.p`
