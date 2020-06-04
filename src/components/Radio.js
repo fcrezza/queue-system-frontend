@@ -57,12 +57,12 @@ const RadioLabel = styled.div`
 `
 
 function Radio(props, ref) {
-  const {id, label, value} = props
+  const {id, label, value, ...rest} = props
 
   return (
     <RadioWrapper htmlFor={id}>
       <RadioInput>
-        <input type="radio" id={id} value={value} name="role" ref={ref} />
+        <input type="radio" id={id} value={value} name="role" ref={ref} {...rest} />
         <div className="check" />
       </RadioInput>
       <RadioLabel>{label}</RadioLabel>

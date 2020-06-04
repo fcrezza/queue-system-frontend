@@ -26,9 +26,9 @@ const Back = styled(Link)`
   outline: none;
 `
 
-export function BackButton({to}) {
+export function BackButton({to, ...rest}) {
   return (
-    <Back to={to}>
+    <Back to={to} {...rest}>
       <img src={backArrowImg} alt="" />
     </Back>
   )
