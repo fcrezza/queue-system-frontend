@@ -2,8 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import {Link as RouterLink} from 'react-router-dom'
 
-import {ButtonBlock} from '../components/Button'
-import ilustration from '../images/ilustration.svg'
+import {ButtonBlock} from '../../components/Button'
+import ilustration from '../../images/ilustration.svg'
 
 const Container = styled.div`
   padding: 3rem 2rem;

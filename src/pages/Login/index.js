@@ -3,10 +3,10 @@ import styled from 'styled-components'
 import {useForm} from 'react-hook-form'
 import {object, string} from 'yup'
 
-import Input from '../components/Input'
-import Radio from '../components/Radio'
-import {ButtonBlock, BackButton} from '../components/Button'
-import {useAuth} from '../context/AuthContext'
+import Input from '../../components/Input'
+import Radio from '../../components/Radio'
+import {ButtonBlock, BackButton} from '../../components/Button'
+import {useAuth} from '../../context/AuthContext'
 
 const Container = styled.div`
   padding: 3rem 2rem;

@@ -1,8 +1,8 @@
 import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
-import MahasiswaDashboard from '../pages/MahasiswaDashboard'
-import DosenDashboard from '../pages/DosenDashboard'
+import MahasiswaDashboard from '../pages/Dashboard/MahasiswaDashboard'
+import DosenDashboard from '../pages/Dashboard/DosenDashboard'
 import {useAuth} from '../context/AuthContext'
 
 function AuthenticatedRoute() {
