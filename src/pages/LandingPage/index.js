@@ -2,12 +2,9 @@ import React from 'react'
 import styled from 'styled-components'
 import {Link as RouterLink} from 'react-router-dom'
 
+import Layout from '../../layout'
 import {ButtonBlock} from '../../components/Button'
 import ilustration from '../../images/ilustration.svg'
-
-const Container = styled.div`
-  padding: 3rem 2rem;
-`
 
 const IlustrationImg = styled.img`
   width: 100%;
@@ -48,7 +45,7 @@ const ButtonContainer = styled.div`
 
 function HomePage() {
   return (
-    <Container>
+    <Layout>
       <IlustrationImg src={ilustration} alt="" />
       <Title>Bimbingan tidak perlu ribet</Title>
       <Subtitle>
@@ -62,7 +59,7 @@ function HomePage() {
           Masuk
         </ButtonBlock>
       </ButtonContainer>
-    </Container>
+    </Layout>
   )
 }
 

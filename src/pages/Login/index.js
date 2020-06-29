@@ -1,16 +1,13 @@
-import React, {useState} from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import {useForm} from 'react-hook-form'
 import {object, string} from 'yup'
 
+import Layout from '../../layout'
 import Input from '../../components/Input'
 import Radio from '../../components/Radio'
 import {ButtonBlock, BackButton} from '../../components/Button'
 import {useAuth} from '../../context/AuthContext'
-
-const Container = styled.div`
-  padding: 3rem 2rem;
-`
 
 const Form = styled.form`
   & > * {
@@ -39,7 +36,7 @@ const ErrorMessage = styled.p`
 
 function Loginpage({history}) {
   const {login} = useAuth()
-  const [error, setError] = useState('')
+  const [error, setError] = React.useState('')
   const validationSchema = object().shape({
     role: string().oneOf(['mahasiswa', 'dosen']).required(),
     username: string().required(),
@@ -70,7 +67,7 @@ function Loginpage({history}) {
   }
 
   return (
-    <Container>
+    <Layout>
       <BackButton to="/" />
       <FormWrapper>
         <Title>Masuk sebagai</Title>
@@ -95,7 +92,7 @@ function Loginpage({history}) {
         </Form>
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </FormWrapper>
-    </Container>
+    </Layout>
   )
 }
 

@@ -1,29 +1,24 @@
 import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
-import MahasiswaDashboard from '../pages/Dashboard/MahasiswaDashboard'
-import DosenDashboard from '../pages/Dashboard/DosenDashboard'
+import MahasiswaDashboard from '../pages/Dashboard/Mahasiswa'
+import DosenDashboard from '../pages/Dashboard/Dosen'
 import {useAuth} from '../context/AuthContext'
+import {SocketProvider} from '../context/SocketContext'
 
 function AuthenticatedRoute() {
   const {user} = useAuth()
-
-  if (user.role === 'mahasiswa') {
-    return (
-      <Router>
-        <Switch>
-          <Route exact path="/" component={MahasiswaDashboard} />
-        </Switch>
-      </Router>
-    )
-  }
+  const component =
+    user.role === 'mahasiswa' ? MahasiswaDashboard : DosenDashboard
 
   return (
-    <Router>
-      <Switch>
-        <Route exact path="/" component={DosenDashboard} />
-      </Switch>
-    </Router>
+    <SocketProvider>
+      <Router>
+        <Switch>
+          <Route path="/" component={component} />
+        </Switch>
+      </Router>
+    </SocketProvider>
   )
 }
 

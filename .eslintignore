@@ -3,3 +3,4 @@ public
 build
 config
 scripts
+src/serviceWorker.js
