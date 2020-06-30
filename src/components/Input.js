@@ -2,9 +2,9 @@ import React, {forwardRef, useState} from 'react'
 import styled from 'styled-components'
 
 const Container = styled.div`
-  background: #f0f0f0;
-  border-bottom: ${({isFocus}) =>
-    isFocus ? '2px solid #222' : '2px solid #666'};
+  background: ${({theme}) => theme.gray};
+  border-bottom: ${({isFocus, theme}) =>
+    isFocus ? `2px solid ${theme.main}` : `2px solid ${theme.secondary}`};
   transition: border-bottom 0.1s;
 `
 
@@ -18,7 +18,7 @@ const InputField = styled.input`
   border: 0;
   background: transparent;
   outline: none;
-  color: #333;
+  color: ${({theme}) => theme.secondary};
   font-size: 1.8rem;
   height: 3.5rem;
 `
@@ -26,7 +26,7 @@ const InputField = styled.input`
 const Text = styled.div`
   padding: 0.8rem 0 0 1rem;
   font-size: 1.3rem;
-  color: ${({isFocus}) => (isFocus ? '#222' : '#666')};
+  color: ${({isFocus, theme}) => (isFocus ? theme.main : theme.secondary)};
   transition: color 0.1s;
 `
 

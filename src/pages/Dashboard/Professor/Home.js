@@ -1,8 +1,9 @@
-import React from 'react'
-import styled from 'styled-components'
+import React, {useContext} from 'react'
+import styled, {ThemeContext} from 'styled-components'
 import {Link as RouterLink} from 'react-router-dom'
 import Layout from '../../../layout'
-import {Title, Container} from '../../../components/Dashboard/Section'
+import Preference from '../../../components/Dashboard/Preference'
+import {Title, FlexContainer} from '../../../components/Dashboard/Section'
 import {
   ProfileContainer,
   DarkProfileContainer,
@@ -29,32 +30,14 @@ const Link = styled(RouterLink)`
   }
 `
 
-const Preference = styled.div`
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-`
-
-const PreferenceImage = styled.img`
-  display: block;
-  width: 100%;
-`
-
-const PreferenceLink = styled(RouterLink)`
-  text-decoration: none;
-`
-
 function Home({greetingMessage, fullname, facultyName, avatar}) {
+  const theme = useContext(ThemeContext)
   return (
     <Layout>
-      <Container>
+      <FlexContainer>
         <Title>{greetingMessage}</Title>
-        <PreferenceLink to="/profile">
-          <Preference>
-            <PreferenceImage src={dosenAvatars[avatar]} alt="" />
-          </Preference>
-        </PreferenceLink>
-      </Container>
+        <Preference avatar={dosenAvatars[avatar]} />
+      </FlexContainer>
       <DarkProfileContainer>
         <AvatarContainer>
           <Avatar src={dosenAvatars[avatar]} alt={`${fullname} avatar`} />
@@ -62,7 +45,7 @@ function Home({greetingMessage, fullname, facultyName, avatar}) {
         <DarkProfileData>
           <ProfileHeading>{fullname}</ProfileHeading>
           <ProfileText>Dosen fakultas {facultyName}</ProfileText>
-          <Link to="/profile" color="#f8f8f8">
+          <Link to="/profile" color={theme.textMainLight}>
             Selengkapnya →
           </Link>
         </DarkProfileData>
@@ -74,7 +57,7 @@ function Home({greetingMessage, fullname, facultyName, avatar}) {
         <ProfileData>
           <ProfileHeading>Mahasiwa Bimbingan</ProfileHeading>
           <ProfileText>List mahasiswa yang dibimbing</ProfileText>
-          <Link to="/mahasiswa">Selengkapnya →</Link>
+          <Link to="/students">Selengkapnya →</Link>
         </ProfileData>
       </ProfileContainer>
       <ProfileContainer>
@@ -84,7 +67,7 @@ function Home({greetingMessage, fullname, facultyName, avatar}) {
         <ProfileData>
           <ProfileHeading>Antrian</ProfileHeading>
           <ProfileText>Manage antrian mahasiswa</ProfileText>
-          <Link to="/antrian">Selengkapnya →</Link>
+          <Link to="/queue">Selengkapnya →</Link>
         </ProfileData>
       </ProfileContainer>
     </Layout>

@@ -1,11 +1,11 @@
-import React, {useState} from 'react'
+import React from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
 import {useForm} from 'react-hook-form'
 import Layout from '../../../layout'
+import useError from '../../../hooks/useError'
 import Input from '../../../components/Input'
 import {BackButton, ButtonBlock} from '../../../components/Button'
-import {Container} from '../../../components/Dashboard/Section'
 
 const FormContainer = styled.div`
   margin-top: 5rem;
@@ -36,7 +36,7 @@ const ButtonBlockExtend = styled(ButtonBlock)`
 
 function ChangePassword({id, role, history}) {
   const {handleSubmit, register, watch} = useForm()
-  const [error, setError] = useState(null)
+  const {errorMessage, setError} = useError({})
   const oldPassword = watch('oldPassword') || ''
   const newPassword = watch('newPassword') || ''
   const buttonDisable = oldPassword.length < 8 || newPassword.length < 8
@@ -61,9 +61,7 @@ function ChangePassword({id, role, history}) {
 
   return (
     <Layout>
-      <Container>
-        <BackButton to="/profil" />
-      </Container>
+      <BackButton to="/profile" />
       <FormContainer>
         <Title>Ganti password</Title>
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -83,7 +81,7 @@ function ChangePassword({id, role, history}) {
             Ganti password
           </ButtonBlockExtend>
         </Form>
-        <ErrorMessage error={!!error}>{error}</ErrorMessage>
+        <ErrorMessage error={!!errorMessage}>{errorMessage}</ErrorMessage>
       </FormContainer>
     </Layout>
   )

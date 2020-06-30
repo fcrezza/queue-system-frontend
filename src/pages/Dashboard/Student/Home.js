@@ -1,5 +1,5 @@
-import React from 'react'
-import styled from 'styled-components'
+import React, {useContext} from 'react'
+import styled, {ThemeContext} from 'styled-components'
 import {Link as RouterLink} from 'react-router-dom'
 import Layout from '../../../layout'
 import {
@@ -12,7 +12,8 @@ import {
   ProfileHeading,
   ProfileText,
 } from '../../../components/Dashboard/Profile'
-import {Title, Container} from '../../../components/Dashboard/Section'
+import Preference from '../../../components/Dashboard/Preference'
+import {Title, FlexContainer} from '../../../components/Dashboard/Section'
 import {dosenAvatars, mahasiswaAvatars} from '../../../images/userAvatars'
 import queueSVG from '../../../images/queue.svg'
 
@@ -28,28 +29,13 @@ const Link = styled(RouterLink)`
   text-decoration: none;
   font-size: 1.3rem;
   font-weight: 600;
-  color: ${({color}) => color || '#333'};
+  color: ${({color, theme}) => color || theme.main};
   outline: none;
 
   &:hover,
   &:focus {
     text-decoration: underline;
   }
-`
-
-const Preference = styled.div`
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-`
-
-const PreferenceImage = styled.img`
-  display: block;
-  width: 100%;
-`
-
-const PreferenceLink = styled(RouterLink)`
-  text-decoration: none;
 `
 
 function Home(props) {
@@ -61,18 +47,15 @@ function Home(props) {
     study,
     avatar,
   } = props
-  const message = `Halo, ${fullname.slice(0, fullname.indexOf(' '))}`
+  const welcomeMessage = `Halo, ${fullname.slice(0, fullname.indexOf(' '))}`
+  const {textMainLight} = useContext(ThemeContext)
 
   return (
     <Layout>
-      <Container>
-        <Title>{message}</Title>
-        <PreferenceLink to="/profil">
-          <Preference>
-            <PreferenceImage src={mahasiswaAvatars[avatar]} alt="" />
-          </Preference>
-        </PreferenceLink>
-      </Container>
+      <FlexContainer>
+        <Title>{welcomeMessage}</Title>
+        <Preference avatar={mahasiswaAvatars[avatar]} />
+      </FlexContainer>
       <DarkProfileContainer>
         <AvatarContainer>
           <Avatar src={mahasiswaAvatars[avatar]} alt={`${fullname} avatar`} />
@@ -80,7 +63,7 @@ function Home(props) {
         <DarkProfileData>
           <ProfileHeading>{fullname}</ProfileHeading>
           <ProfileText>Mahasiswa {study}</ProfileText>
-          <Link color="#fff" to="/profil">
+          <Link color={textMainLight} to="/profile">
             Selengkapnya →
           </Link>
         </DarkProfileData>
@@ -95,7 +78,7 @@ function Home(props) {
         <ProfileData>
           <ProfileHeading>Dosen pembimbing</ProfileHeading>
           <ProfileText>{professorName}</ProfileText>
-          <Link to="/dosen-pembimbing">Selengkapnya →</Link>
+          <Link to="/professor">Selengkapnya →</Link>
         </ProfileData>
         <StatusIcon status={professorStatus} />
       </ProfileContainer>
@@ -106,7 +89,7 @@ function Home(props) {
         <ProfileData>
           <ProfileHeading>Antrian</ProfileHeading>
           <ProfileText>Lihat antrian secara realtime</ProfileText>
-          <Link to="/antrian">Selengkapnya →</Link>
+          <Link to="/queue">Selengkapnya →</Link>
         </ProfileData>
       </ProfileContainer>
     </Layout>

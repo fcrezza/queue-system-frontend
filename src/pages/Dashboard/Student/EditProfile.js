@@ -3,18 +3,18 @@ import styled from 'styled-components'
 import axios from 'axios'
 import {useForm} from 'react-hook-form'
 import Layout from '../../../layout'
+import useError from '../../../hooks/useError'
 import Input from '../../../components/Input'
 import Select from '../../../components/Profile/Select'
 import Spinner from '../../../components/Spinner'
 import {BackButton, ButtonBlock} from '../../../components/Button'
-import {Container} from '../../../components/Dashboard/Section'
 
 const FormContainer = styled.div`
-  margin-top: 5rem;
+  margin-top: 3rem;
 `
 
 const Title = styled.h1`
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin: 0 0 3rem;
 `
 
@@ -38,15 +38,16 @@ const ButtonBlockExtend = styled(ButtonBlock)`
 
 function EditProfile({user, history}) {
   const {register, handleSubmit, setValue, watch} = useForm()
-  const [prodi, setProdi] = useState(JSON.parse(localStorage.getItem('prodi')))
-  const [genders, setGenders] = useState(
-    JSON.parse(localStorage.getItem('gender')),
+  const [studyPrograms, setStudyPrograms] = useState(
+    JSON.parse(localStorage.getItem('studyPrograms')),
   )
-  const [dosen, setDosen] = useState(null)
-  const [dosenDefaultValue, setDosenDefaultValue] = useState(null)
-  const [error, setError] = useState(null)
+  const [genders, setGenders] = useState(
+    JSON.parse(localStorage.getItem('genders')),
+  )
+  const [professors, setProfessors] = useState(null)
+  const {errorMessage, setError} = useError({})
   const [loading, setLoading] = useState(true)
-  const userProdiInput = watch('study')
+  const userStudyInput = parseInt(watch('study'), 10)
   const {
     id,
     semester,
@@ -69,15 +70,15 @@ function EditProfile({user, history}) {
   }, [])
 
   useEffect(() => {
-    if (!prodi) {
-      const url = `http://localhost:4000/prodi`
+    if (!studyPrograms) {
+      const url = `http://localhost:4000/studyPrograms`
       axios
         .get(url)
         .then(({data}) => {
-          setProdi(data)
+          setStudyPrograms(data)
         })
         .catch((err) => {
-          console.log('error form fetch prodi: ', err)
+          console.log('error form fetch studyPrograms: ', err)
         })
     }
   }, [])
@@ -97,36 +98,32 @@ function EditProfile({user, history}) {
   }, [])
 
   useEffect(() => {
-    const prodiID = userProdiInput || study.id
-    const url = `http://localhost:4000/dosen/${prodiID}`
+    if (userStudyInput) {
+      const url = `http://localhost:4000/professorsByStudyProgram/${userStudyInput}`
 
-    axios
-      .get(url)
-      .then(({data}) => {
-        setDosen(
-          data.map((d) => {
-            const {namaLengkap: nama, ...rest} = d
+      axios
+        .get(url)
+        .then(({data}) => {
+          const professorData = data.map((d) => {
+            const {fullname: nama, ...rest} = d
             return {nama, ...rest}
-          }),
-        )
-
-        if (prodiID === study.id) {
-          const {id: profID} = data.find((p) => p.id === professorID)
-          setDosenDefaultValue(profID)
-        } else {
-          setDosenDefaultValue(data[0].id)
-        }
-      })
-      .catch((err) => {
-        console.log('error from fetch dosen: ', err)
-      })
-  }, [userProdiInput])
+          })
+          setProfessors(professorData)
+          if (userStudyInput !== study.id) {
+            setValue('professor', professorData[0].id)
+          }
+        })
+        .catch((err) => {
+          console.log('error from fetch dosen: ', err)
+        })
+    }
+  }, [userStudyInput])
 
   useEffect(() => {
-    if (!!dosen && !!prodi && !!genders) {
+    if (!!professors && !!studyPrograms && !!genders) {
       setLoading(false)
     }
-  }, [dosen, prodi, genders])
+  }, [professors, studyPrograms, genders])
 
   const onSubmit = (formData) => {
     const data = {
@@ -137,10 +134,12 @@ function EditProfile({user, history}) {
     axios
       .post('http://localhost:4000/changeMahasiswaProfile', data)
       .then(() => {
-        history.push('/profil', {status: 1})
+        history.push('/profile', {status: 1})
       })
-      .catch((err) => {
-        console.log('error from post profile change: ', err)
+      .catch((error) => {
+        if (error.response) {
+          setError(error.response.data.message)
+        }
       })
   }
 
@@ -148,14 +147,9 @@ function EditProfile({user, history}) {
     return <Spinner>Memuat data ...</Spinner>
   }
 
-  const {id: studyDefaultValue} = prodi.find((p) => p.id === study.id)
-  const {id: genderDefaultValue} = genders.find((g) => g.id === gender.id)
-
   return (
     <Layout>
-      <Container>
-        <BackButton to="/profil" />
-      </Container>
+      <BackButton to="/profile" />
       <FormContainer>
         <Title>Ubah profil</Title>
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -179,10 +173,10 @@ function EditProfile({user, history}) {
           />
           <Select
             name="study"
-            defaultValue={studyDefaultValue}
+            defaultValue={study.id}
             placeholder="Prodi"
             setValue={setValue}
-            items={prodi}
+            items={studyPrograms}
           />
           <Input
             placeholder="Semester"
@@ -193,7 +187,7 @@ function EditProfile({user, history}) {
           />
           <Select
             name="gender"
-            defaultValue={genderDefaultValue}
+            defaultValue={gender.id}
             placeholder="Jenis kelamin"
             setValue={setValue}
             items={genders}
@@ -206,14 +200,14 @@ function EditProfile({user, history}) {
           />
           <Select
             name="professor"
-            defaultValue={dosenDefaultValue}
+            defaultValue={professorID}
             placeholder="Dosen pembimbing"
             setValue={setValue}
-            items={dosen}
+            items={professors}
           />
           <ButtonBlockExtend>Simpan</ButtonBlockExtend>
         </Form>
-        <ErrorMessage error={!!error}>{error}</ErrorMessage>
+        <ErrorMessage error={!!errorMessage}>{errorMessage}</ErrorMessage>
       </FormContainer>
     </Layout>
   )

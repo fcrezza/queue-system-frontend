@@ -10,7 +10,7 @@ const ProfileContainer = styled.div`
 `
 
 const DarkProfileContainer = styled(ProfileContainer)`
-  background: #222;
+  background: ${({theme}) => theme.main};
   margin-bottom: 5rem;
 `
 
@@ -53,19 +53,20 @@ const ProfileText = styled.p`
   }
 `
 
-// function LightProfile({avatar, idNumber, fullname, campus, children}) {
+// function StudentProfile({avatar, idNumber, fullname, campus, children}) {
+
 // 	return (
-// 		<ProfileContainer>
+// 		<DarkProfileContainer>
 // 			<AvatarContainer>
 // 				<Avatar src={avatar} alt="avatar" />
 // 			</AvatarContainer>
 // 			<ProfileData>
-// 				<ProfileName>{fullname}</ProfileName>
-// 				<ProfileText>{campus}</ProfileText>
+// 				<ProfileHeading>{fullname}</ProfileHeading>
+// 				<ProfileText>Mahasiswa {campus}</ProfileText>
 // 				<ProfileText>{idNumber}</ProfileText>
 // 			</ProfileData>
 // 			{children}
-// 		</ProfileContainer>
+// 		</DarkProfileContainer>
 // 	)
 // }
 

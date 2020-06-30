@@ -5,9 +5,9 @@ import Home from './Home'
 import Profile from './Profile'
 import ChangePassword from './ChangePassword'
 import EditProfile from './EditProfile'
-import MahasiswaProfile from './MahasiswaProfile'
-import MahasiswaList from './MahasiswaList'
-import Antrian from './Antrian'
+import StudentProfile from './StudentProfile'
+import StudentList from './StudentList'
+import Queue from './Queue'
 
 function generateGreetingMessage(id, fullname) {
   if (id === 1) {
@@ -17,7 +17,7 @@ function generateGreetingMessage(id, fullname) {
   return `Halo, Bu ${fullname.slice(0, fullname.indexOf(' '))}`
 }
 
-function DosenDashboard() {
+function ProfessorDashboard({match}) {
   const {user} = useAuth()
   const {
     id,
@@ -35,17 +35,17 @@ function DosenDashboard() {
   return (
     <Switch>
       <Route
-        path="/profile/change-password"
+        path={`${match.path}profile/change-password`}
         render={(routeProps) => (
           <ChangePassword id={id} role={role} {...routeProps} />
         )}
       />
       <Route
-        path="/profile/edit"
+        path={`${match.path}profile/edit`}
         render={(routeProps) => <EditProfile user={user} {...routeProps} />}
       />
       <Route
-        path="/profile"
+        path={`${match.path}profile`}
         render={(routeProps) => (
           <Profile
             username={username}
@@ -60,19 +60,19 @@ function DosenDashboard() {
         )}
       />
       <Route
-        path="/mahasiswa/:id"
-        render={(routeProps) => <MahasiswaProfile {...routeProps} />}
+        path={`${match.path}students/:id`}
+        render={(routeProps) => <StudentProfile {...routeProps} />}
       />
       <Route
-        path="/mahasiswa"
-        render={(routeProps) => <MahasiswaList id={id} {...routeProps} />}
+        path={`${match.path}students`}
+        render={(routeProps) => <StudentList id={id} {...routeProps} />}
       />
       <Route
-        path="/antrian"
-        render={(routeProps) => <Antrian id={id} {...routeProps} />}
+        path={`${match.path}queue`}
+        render={(routeProps) => <Queue id={id} {...routeProps} />}
       />
       <Route
-        path="/"
+        path={match.path}
         render={(routeProps) => (
           <Home
             greetingMessage={greetingMessage}
@@ -87,4 +87,4 @@ function DosenDashboard() {
   )
 }
 
-export default DosenDashboard
+export default ProfessorDashboard

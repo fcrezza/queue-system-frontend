@@ -10,7 +10,7 @@ const Subtitle = styled.p`
   font-size: 1.5rem;
 `
 
-const Container = styled.div`
+const FlexContainer = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 5rem;
@@ -22,4 +22,4 @@ const AntrianContainer = styled.div`
   }
 `
 
-export {Container, Subtitle, Title, AntrianContainer}
+export {FlexContainer, Subtitle, Title, AntrianContainer}

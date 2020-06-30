@@ -3,22 +3,22 @@ import axios from 'axios'
 import {Route, Switch} from 'react-router-dom'
 import {useSocket} from '../../../context/SocketContext'
 import Home from './Home'
-import Antrian from './Antrian'
+import Queue from './Queue'
 import Profile from './Profile'
 import EditProfile from './EditProfile'
 import ChangePassword from './ChangePassword'
-import ProfilePembimbing from './ProfilePembimbing'
+import Professor from './Professor'
 import Spinner from '../../../components/Spinner'
 import {useAuth} from '../../../context/AuthContext'
 
-function MahasiswaDashboard({match}) {
+function StudentDashboard({match}) {
   const {user} = useAuth()
   const socket = useSocket()
   const [professor, setProfessor] = useState(null)
   const {id, fullname, avatar, study, role, professorID} = user
 
   useEffect(() => {
-    socket.on('dosenStatus', (data) => {
+    socket.on('professorStatus', (data) => {
       if (professorID === data.id) {
         setProfessor((prevData) => ({
           ...prevData,
@@ -29,7 +29,7 @@ function MahasiswaDashboard({match}) {
   }, [])
 
   useEffect(() => {
-    const url = `http://localhost:4000/getDosen/${professorID}`
+    const url = `http://localhost:4000/professor/${professorID}`
     axios
       .get(url)
       .then(({data}) => {
@@ -47,9 +47,9 @@ function MahasiswaDashboard({match}) {
   return (
     <Switch>
       <Route
-        path={`${match.path}antrian`}
+        path={`${match.path}queue`}
         render={(routerProps) => (
-          <Antrian
+          <Queue
             id={id}
             professorID={professorID}
             professorName={professor.fullname}
@@ -60,23 +60,23 @@ function MahasiswaDashboard({match}) {
         )}
       />
       <Route
-        path={`${match.path}dosen-pembimbing`}
+        path={`${match.path}professor`}
         render={(routerProps) => (
-          <ProfilePembimbing professor={professor} {...routerProps} />
+          <Professor professor={professor} {...routerProps} />
         )}
       />
       <Route
-        path={`${match.path}profil/ubah-password`}
+        path={`${match.path}profile/change-password`}
         render={(routerProps) => (
           <ChangePassword role={role} id={id} {...routerProps} />
         )}
       />
       <Route
-        path={`${match.path}profil/edit`}
+        path={`${match.path}profile/edit`}
         render={(routerProps) => <EditProfile user={user} {...routerProps} />}
       />
       <Route
-        path={`${match.path}profil`}
+        path={`${match.path}profile`}
         render={(routerProps) => (
           <Profile
             user={user}
@@ -103,4 +103,4 @@ function MahasiswaDashboard({match}) {
   )
 }
 
-export default MahasiswaDashboard
+export default StudentDashboard

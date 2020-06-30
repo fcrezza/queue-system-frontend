@@ -9,7 +9,7 @@ import {BackButton, Button} from '../../../components/Button'
 import {
   Title,
   Subtitle,
-  Container,
+  FlexContainer,
   AntrianContainer,
 } from '../../../components/Dashboard/Section'
 import {
@@ -23,7 +23,7 @@ import {
 import {mahasiswaAvatars} from '../../../images/userAvatars'
 import nullSVG from '../../../images/null.svg'
 
-const ControlContainer = styled(Container)`
+const ControlContainer = styled(FlexContainer)`
   align-items: center;
 `
 
@@ -65,33 +65,33 @@ const Link = styled(RouterLink)`
 
 function Antrian({id}) {
   const socket = useSocket()
-  const [antrian, setAntrian] = useState(null)
+  const [queue, setQueue] = useState(null)
   const [active, setActive] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    socket.emit('getAntrian', id)
-    socket.on('new-data', (data, dosenID) => {
-      const filterActiveAntrian = data.filter((a) => a.status === 'active')[0]
-      if (dosenID === id) {
-        if (filterActiveAntrian) {
-          setActive(filterActiveAntrian)
+    socket.emit('getQueue', id)
+    socket.on('newData', (data, profID) => {
+      const filterActiveQueue = data.filter((a) => a.status === 'active')[0]
+      const filterPendingQueue = data.filter((a) => a.status === 'pending')
+      if (profID === id) {
+        if (filterActiveQueue) {
+          setActive(filterActiveQueue)
         }
 
-        setAntrian(data.filter((a) => a.status === 'pending'))
+        setQueue(filterPendingQueue)
       }
     })
   }, [])
 
   useEffect(() => {
-    if (antrian) {
+    if (queue) {
       setLoading(false)
     }
-  }, [antrian])
+  }, [queue])
 
   const NextQueue = () => {
-    console.log({active, antrian, id})
-    socket.emit('next', active, antrian[0], id)
+    socket.emit('nextQueue', active, queue[0], id)
     setActive(null)
   }
 
@@ -111,8 +111,8 @@ function Antrian({id}) {
         </Subtitle>
       </Wrapper>
       <ControlContainer>
-        <Subtitle>{antrian?.length} mahasiswa menunggu</Subtitle>
-        <Button onClick={NextQueue} disabled={!antrian.length && !active}>
+        <Subtitle>{queue?.length} mahasiswa menunggu</Subtitle>
+        <Button onClick={NextQueue} disabled={!queue.length && !active}>
           Next
         </Button>
       </ControlContainer>
@@ -129,13 +129,13 @@ function Antrian({id}) {
               <ProfileData>
                 <ProfileHeading>{active.fullname}</ProfileHeading>
                 <ProfileText>Mahasiswa {active.study}</ProfileText>
-                <Link to={`/mahasiswa/${active.id}`}>Lihat profil →</Link>
+                <Link to={`/students/${active.id}`}>Lihat profil →</Link>
               </ProfileData>
             </ProfileContainer>
             <Devider />
           </div>
         ) : null}
-        {antrian.map((x) => {
+        {queue.map((x) => {
           return (
             <ProfileContainer key={x.id}>
               <AvatarContainer>
@@ -147,12 +147,12 @@ function Antrian({id}) {
               <ProfileData>
                 <ProfileHeading>{x.fullname}</ProfileHeading>
                 <ProfileText>Mahasiswa {x.study}</ProfileText>
-                <Link to={`/mahasiswa/${x.id}`}>Lihat profil →</Link>
+                <Link to={`/students/${x.id}`}>Lihat profil →</Link>
               </ProfileData>
             </ProfileContainer>
           )
         })}
-        {!antrian.length && !active ? <NoQueue /> : null}
+        {!queue.length && !active ? <NoQueue /> : null}
       </AntrianContainer>
     </Layout>
   )

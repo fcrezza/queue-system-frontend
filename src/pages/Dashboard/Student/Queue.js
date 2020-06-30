@@ -19,11 +19,15 @@ import {
 import {
   Title,
   Subtitle,
-  Container,
+  FlexContainer,
   AntrianContainer,
 } from '../../../components/Dashboard/Section'
 import {dosenAvatars, mahasiswaAvatars} from '../../../images/userAvatars'
 import nullSVG from '../../../images/null.svg'
+
+const Container = styled.div`
+  margin: 3rem 0;
+`
 
 const StatusIcon = styled.div`
   width: 10px;
@@ -89,10 +93,10 @@ function generateStatusMessage(id, activeQueue, indexQueue) {
   return message
 }
 
-function Antrian(props) {
+function Queue(props) {
   const socket = useSocket()
   const [active, setActive] = useState(null)
-  const [antrian, setAntrian] = useState(null)
+  const [queue, setQueue] = useState(null)
   const [loading, setLoading] = useState(true)
   const [statusMessage, setStatusMessage] = useState('')
   const {
@@ -104,47 +108,47 @@ function Antrian(props) {
   } = props
 
   useEffect(() => {
-    socket.emit('getAntrian', professorID)
+    socket.emit('getQueue', professorID)
 
-    socket.on('new-data', (data, dosenID) => {
-      const isInAntrian = data.find((x) => x.id === id)
-      if (isInAntrian && professorID === dosenID) {
-        const indexQueue = data.indexOf(isInAntrian)
-        const filterActiveAntrian = data.filter((a) => a.status === 'active')
-        const filterAntrian = data.filter((a) => a.status === 'pending')
-        if (filterActiveAntrian.length) {
-          setActive(filterActiveAntrian[0])
+    socket.on('newData', (data, profID) => {
+      const isInQueue = data.find((x) => x.id === id)
+      if (isInQueue && professorID === profID) {
+        const indexQueue = data.indexOf(isInQueue)
+        const filterActiveQueue = data.filter((a) => a.status === 'active')
+        const filterPendingQueue = data.filter((a) => a.status === 'pending')
+        if (filterActiveQueue.length) {
+          setActive(filterActiveQueue[0])
         }
-        setAntrian(filterAntrian)
+        setQueue(filterPendingQueue)
         setStatusMessage(
-          generateStatusMessage(id, filterActiveAntrian[0], indexQueue),
+          generateStatusMessage(id, filterActiveQueue[0], indexQueue),
         )
       } else {
-        setAntrian(null)
+        setQueue(null)
         setActive(null)
       }
     })
   }, [])
 
   useEffect(() => {
-    if (!antrian) {
+    if (!queue) {
       setLoading(false)
     }
-  }, [antrian])
+  }, [queue])
 
   const requestBimbingan = () => {
     if (professorStatus) {
-      socket.emit('requestBimbingan', {id, professorID})
+      socket.emit('requestQueue', {id, professorID})
       return
     }
 
-    window.alert('offline!')
+    window.alert('professor offline!')
   }
 
   const cancelQueue = () => {
     if (active?.id !== id) {
-      const {time} = antrian.find((a) => a.id === id)
-      socket.emit('out', {id, time, professorID})
+      const {time} = queue.find((a) => a.id === id)
+      socket.emit('outFromQueue', {id, time, professorID})
     }
   }
 
@@ -154,9 +158,7 @@ function Antrian(props) {
 
   return (
     <Layout>
-      <Container>
-        <BackButton to="/" />
-      </Container>
+      <BackButton to="/" />
       <Container>
         <Title>Dosen pembimbing</Title>
       </Container>
@@ -170,21 +172,21 @@ function Antrian(props) {
         <DarkProfileData>
           <ProfileHeading>Dosen pembimbing</ProfileHeading>
           <ProfileText>{professorName}</ProfileText>
-          <Link to="/dosen-pembimbing">Selengkapnya →</Link>
+          <Link to="/professor">Selengkapnya →</Link>
         </DarkProfileData>
         <StatusIcon status={professorStatus} />
       </DarkProfileContainer>
-      <Container>
+      <FlexContainer>
         <div>
           <Title>Antrian</Title>
           <Subtitle>{statusMessage}</Subtitle>
         </div>
         <div>
-          <ButtonExtend onClick={cancelQueue} disabled={!antrian && !active}>
+          <ButtonExtend onClick={cancelQueue} disabled={!queue && !active}>
             Batal
           </ButtonExtend>
         </div>
-      </Container>
+      </FlexContainer>
       <AntrianContainer>
         {active ? (
           <div>
@@ -204,8 +206,8 @@ function Antrian(props) {
             <Devider />
           </div>
         ) : null}
-        {antrian ? (
-          antrian.map(({fullname, id: studentID, avatar, study}) => {
+        {queue ? (
+          queue.map(({fullname, id: studentID, avatar, study}) => {
             return (
               <ProfileContainer key={studentID}>
                 <AvatarContainer>
@@ -233,10 +235,4 @@ function Antrian(props) {
   )
 }
 
-export default Antrian
-
-// {
-// 					antrian: filterAntrian,
-// 					statusMessage: ,
-// 					isActive: filterActiveAntrian[0]?.id === id,
-// 				}
+export default Queue

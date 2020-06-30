@@ -3,18 +3,18 @@ import styled from 'styled-components'
 import axios from 'axios'
 import {useForm} from 'react-hook-form'
 import Layout from '../../../layout'
+import useError from '../../../hooks/useError'
 import Input from '../../../components/Input'
 import Select from '../../../components/Profile/Select'
 import Spinner from '../../../components/Spinner'
 import {BackButton, ButtonBlock} from '../../../components/Button'
-import {Container} from '../../../components/Dashboard/Section'
 
 const FormContainer = styled.div`
   margin-top: 5rem;
 `
 
 const Title = styled.h1`
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin: 0 0 3rem;
 `
 
@@ -34,13 +34,13 @@ const ErrorMessage = styled.p`
 function EditProfile({user, history}) {
   const {register, handleSubmit, setValue} = useForm()
   const [faculties, setFaculties] = useState(
-    JSON.parse(localStorage.getItem('fakultas')),
+    JSON.parse(localStorage.getItem('faculties')),
   )
   const [genders, setGenders] = useState(
-    JSON.parse(localStorage.getItem('gender')),
+    JSON.parse(localStorage.getItem('genders')),
   )
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const {errorMessage, setError} = useError({})
   const {id, gender, username, nip, address, fullname, faculty} = user
 
   useEffect(() => {
@@ -60,16 +60,16 @@ function EditProfile({user, history}) {
     if (!genders) {
       axios.get('http://localhost:4000/genders').then(({data}) => {
         setGenders(data)
-        localStorage.setItem('gender', JSON.stringify(data))
+        localStorage.setItem('genders', JSON.stringify(data))
       })
     }
   }, [])
 
   useEffect(() => {
     if (!faculties) {
-      axios.get('http://localhost:4000/fakultas').then(({data}) => {
+      axios.get('http://localhost:4000/faculties').then(({data}) => {
         setFaculties(data)
-        localStorage.setItem('fakultas', JSON.stringify(data))
+        localStorage.setItem('faculties', JSON.stringify(data))
       })
     }
   }, [])
@@ -79,23 +79,25 @@ function EditProfile({user, history}) {
       id,
       ...formData,
     }
-    axios.post('http://localhost:4000/changeDosenProfile', data).then(() => {
-      history.push('/profile', {status: 1})
-    })
+    axios
+      .post('http://localhost:4000/changeDosenProfile', data)
+      .then(() => {
+        history.push('/profile', {status: 1})
+      })
+      .catch((error) => {
+        if (error.response) {
+          setError(error.response.data.message)
+        }
+      })
   }
 
   if (loading) {
     return <Spinner>Memuat data ...</Spinner>
   }
 
-  const {id: facultyDefaultValue} = faculties.find((f) => f.id === faculty.id)
-  const {id: genderDefaultValue} = genders.find((g) => g.id === gender.id)
-
   return (
     <Layout>
-      <Container>
-        <BackButton to="/profil" />
-      </Container>
+      <BackButton to="/profile" />
       <FormContainer>
         <Title>Ubah profil</Title>
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -119,14 +121,14 @@ function EditProfile({user, history}) {
           />
           <Select
             name="faculty"
-            defaultValue={facultyDefaultValue}
+            defaultValue={faculty.id}
             placeholder="Fakultas"
             setValue={setValue}
             items={faculties}
           />
           <Select
             name="gender"
-            defaultValue={genderDefaultValue}
+            defaultValue={gender.id}
             placeholder="Jenis kelamin"
             setValue={setValue}
             items={genders}
@@ -139,7 +141,7 @@ function EditProfile({user, history}) {
           />
           <ButtonBlock>Simpan</ButtonBlock>
         </Form>
-        <ErrorMessage error={!!error}>{error}</ErrorMessage>
+        <ErrorMessage error={!!errorMessage}>{errorMessage}</ErrorMessage>
       </FormContainer>
     </Layout>
   )

@@ -48,7 +48,7 @@ function MahasiswaList({id}) {
   const [inputValue, setInputValue] = useState('')
 
   useEffect(() => {
-    const url = `http://localhost:4000/listMahasiswa/${id}`
+    const url = `http://localhost:4000/listStudents/${id}`
     axios
       .get(url)
       .then(({data}) => {
@@ -67,9 +67,11 @@ function MahasiswaList({id}) {
     return <Spinner>Memuat data ... </Spinner>
   }
 
-  const filteredList = list.filter(({fullname}) =>
-    fullname.includes(inputValue),
-  )
+  const filteredList = list.filter(({fullname}) => {
+    const input = inputValue.toLowerCase()
+    const name = fullname.toLowerCase()
+    return name.includes(input)
+  })
 
   return (
     <Layout>
@@ -88,15 +90,15 @@ function MahasiswaList({id}) {
         />
       </Container>
       <Container>
-        {filteredList.map(({id: mahasiswaID, study, avatar, fullname}) => (
-          <ProfileContainer key={mahasiswaID}>
+        {filteredList.map(({id: studentID, study, avatar, fullname}) => (
+          <ProfileContainer key={studentID}>
             <AvatarContainer>
               <Avatar src={mahasiswaAvatars[avatar]} alt="" />
             </AvatarContainer>
             <ProfileData>
               <ProfileHeading>{fullname}</ProfileHeading>
               <ProfileText>Mahasiswa {study}</ProfileText>
-              <Link to={`/mahasiswa/${mahasiswaID}`}>Selengkapnya →</Link>
+              <Link to={`/students/${studentID}`}>Selengkapnya →</Link>
             </ProfileData>
           </ProfileContainer>
         ))}

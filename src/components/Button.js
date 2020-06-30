@@ -1,12 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
-import {Link} from 'react-router-dom'
-
+import {Link as RouterLink} from 'react-router-dom'
 import backArrowImg from '../images/back-arrow.svg'
 
+const Link = styled(RouterLink)`
+  text-decoration: none;
+`
+
 export const Button = styled.button`
-  background: #222;
-  color: #fff;
+  background: ${({theme}) => theme.main};
+  color: ${({theme}) => theme.textMainLight};
   padding: 1.2rem 1.8rem;
   border: 0;
   border-radius: 5rem;
@@ -21,15 +24,10 @@ export const ButtonBlock = styled(Button)`
   width: 100%;
 `
 
-const Back = styled(Link)`
-  text-decoration: none;
-  outline: none;
-`
-
 export function BackButton({to, ...rest}) {
   return (
-    <Back to={to} {...rest}>
+    <Link to={to} {...rest}>
       <img src={backArrowImg} alt="" />
-    </Back>
+    </Link>
   )
 }

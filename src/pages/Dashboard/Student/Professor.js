@@ -1,12 +1,9 @@
 import React from 'react'
-import axios from 'axios'
 import styled from 'styled-components'
-import {OverlayScrollbarsComponent} from 'overlayscrollbars-react'
+import OverlayScrollbar from '../../../components/Dashboard/OverlayScrollbar'
 import Layout from '../../../layout'
 import {BackButton} from '../../../components/Button'
-import {Container} from '../../../components/Dashboard/Section'
 import {dosenAvatars} from '../../../images/userAvatars'
-import 'overlayscrollbars/css/OverlayScrollbars.css'
 
 const ProfileHeader = styled.div`
   display: flex;
@@ -79,7 +76,7 @@ const AtributeValue = styled.div`
   white-space: nowrap;
   min-width: 0;
 `
-function ProfilePembimbing({professor}) {
+function Professor({professor}) {
   const {
     username,
     avatar,
@@ -93,9 +90,7 @@ function ProfilePembimbing({professor}) {
 
   return (
     <Layout>
-      <Container>
-        <BackButton to="/" />
-      </Container>
+      <BackButton to="/" />
       <ProfileHeader>
         <AvatarContainer>
           <Avatar src={dosenAvatars[avatar]} alt={`${fullname} avatar`} />
@@ -162,17 +157,4 @@ function ProfilePembimbing({professor}) {
   )
 }
 
-function OverlayScrollbar({children}) {
-  const options = {
-    scrollbars: {autoHide: 'leave', autoHideDelay: 200},
-    overflowBehavior: {y: 'hidden'},
-  }
-
-  return (
-    <OverlayScrollbarsComponent options={options}>
-      {children}
-    </OverlayScrollbarsComponent>
-  )
-}
-
-export default ProfilePembimbing
+export default Professor

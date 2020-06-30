@@ -1,24 +1,23 @@
 import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
-
-import MahasiswaDashboard from '../pages/Dashboard/Mahasiswa'
-import DosenDashboard from '../pages/Dashboard/Dosen'
 import {useAuth} from '../context/AuthContext'
 import {SocketProvider} from '../context/SocketContext'
+import StudentDashboard from '../pages/Dashboard/Student'
+import ProfessorDashboard from '../pages/Dashboard/Professor'
 
 function AuthenticatedRoute() {
   const {user} = useAuth()
   const component =
-    user.role === 'mahasiswa' ? MahasiswaDashboard : DosenDashboard
+    user.role === 'student' ? StudentDashboard : ProfessorDashboard
 
   return (
-    <SocketProvider>
-      <Router>
-        <Switch>
+    <Router>
+      <Switch>
+        <SocketProvider>
           <Route path="/" component={component} />
-        </Switch>
-      </Router>
-    </SocketProvider>
+        </SocketProvider>
+      </Switch>
+    </Router>
   )
 }
 

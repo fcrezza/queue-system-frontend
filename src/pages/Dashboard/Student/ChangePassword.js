@@ -5,14 +5,13 @@ import {useForm} from 'react-hook-form'
 import Layout from '../../../layout'
 import Input from '../../../components/Input'
 import {BackButton, ButtonBlock} from '../../../components/Button'
-import {Container} from '../../../components/Dashboard/Section'
 
 const FormContainer = styled.div`
-  margin-top: 5rem;
+  margin-top: 3rem;
 `
 
 const Title = styled.h1`
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin: 0 0 3rem;
 `
 
@@ -50,7 +49,7 @@ function ChangePassword({id, role, history}) {
     axios
       .post('http://localhost:4000/changePassword', data)
       .then(() => {
-        history.push('/profil', {status: 1})
+        history.push('/profile', {status: 1})
       })
       .catch((err) => {
         if (err.response) {
@@ -61,9 +60,7 @@ function ChangePassword({id, role, history}) {
 
   return (
     <Layout>
-      <Container>
-        <BackButton to="/profil" />
-      </Container>
+      <BackButton to="/profile" />
       <FormContainer>
         <Title>Ganti password</Title>
         <Form onSubmit={handleSubmit(onSubmit)}>

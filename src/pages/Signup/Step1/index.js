@@ -1,107 +1,101 @@
-import React, {useState} from 'react'
-import styled from 'styled-components'
+import React from 'react'
 import axios from 'axios'
-import useDeepCompareEffect from 'use-deep-compare-effect'
 import {useForm} from 'react-hook-form'
 import {object, string} from 'yup'
-
+import useError from '../../../hooks/useError'
+import Layout from '../../../layout'
 import Radio from '../../../components/Radio'
 import Input from '../../../components/Input'
 import {Button, BackButton} from '../../../components/Button'
 import {
-	ErrorMessage,
-	Container,
-	Form,
-	FormWrapper,
-	Title,
-} from '../../../components/Signup'
+  ErrorMessage,
+  Container,
+  Form,
+  Title,
+  RadioContainer,
+} from '../../../components/Form'
 
-const RadioContainer = styled.div`
-	display: flex;
-	align-items: center;
-`
+const validationSchema = object().shape({
+  role: string().oneOf(['student', 'professor']).required(),
+  username: string().required('Username harus di isi'),
+  password: string()
+    .min(8, ({min}) => {
+      return `Password minimal mengandung ${min} karakter`
+    })
+    .required('Password harus di isi'),
+})
 
-function Step1({data, nextStep}) {
-	const [error, setError] = useState(null)
-	const validationSchema = object().shape({
-		role: string().oneOf(['mahasiswa', 'dosen']).required(),
-		username: string().required('Username harus di isi'),
-		password: string()
-			.min(8, ({min}) => {
-				return `Password minimal mengandung ${min} karakter`
-			})
-			.required('Password harus di isi'),
-	})
-	const {register, errors, handleSubmit} = useForm({
-		reValidateMode: 'onSubmit',
-		validationSchema,
-	})
+function Step1({cacheFormData, nextStep}) {
+  const {
+    role: cacheRole,
+    username: cacheUsername,
+    password: cachePassword,
+  } = cacheFormData
+  const {register, errors, handleSubmit} = useForm({
+    reValidateMode: 'onSubmit',
+    validationSchema,
+  })
+  const {errorMessage, setError} = useError(errors)
 
-	useDeepCompareEffect(() => {
-		if (Object.keys(errors).length !== 0) {
-			setError(errors[Object.keys(errors)[0]].message)
-		}
-	}, [errors])
+  const onSubmit = async (formData) => {
+    const {username, role} = formData
+    try {
+      await axios.post('http://localhost:4000/checkUsername', {
+        username,
+        role,
+      })
 
-	const onSubmit = (formData) => {
-		axios
-			.post('http://localhost:4000/checkUsername', {
-				username: formData.username,
-				role: formData.role,
-			})
-			.then((_res) => {
-				nextStep(formData, 2)
-			})
-			.catch((err) => {
-				if (err.response) {
-					setError(err.response.data.message)
-				} else {
-					setError('Pastikan kamu mempunyai internet koneksi')
-				}
-			})
-	}
+      nextStep(formData, 2)
+    } catch (err) {
+      if (err.response) {
+        setError(err.response.data.message)
+      } else {
+        setError('Pastikan kamu mempunyai internet koneksi')
+      }
+    }
+  }
 
-	return (
-		<Container>
-			<BackButton to="/" />
-			<FormWrapper>
-				<Title>Daftar sebagai</Title>
-				<Form onSubmit={handleSubmit(onSubmit)}>
-					<RadioContainer>
-						<Radio
-							id="mahasiswa"
-							label="Mahasiswa"
-							value="mahasiswa"
-							ref={register}
-							defaultChecked={data.role === 'mahasiswa' || true}
-						/>
-						<Radio
-							id="dosen"
-							label="Dosen"
-							value="dosen"
-							ref={register}
-							defaultChecked={data.role === 'dosen'}
-						/>
-					</RadioContainer>
-					<Input
-						placeholder="Username"
-						name="username"
-						defaultValue={data.username || ''}
-						ref={register}
-					/>
-					<Input
-						placeholder="Password"
-						name="password"
-						type="password"
-						defaultValue={data.password || ''}
-						ref={register}
-					/>
-					<Button type="submit">Lanjut</Button>
-				</Form>
-				<ErrorMessage>{error}</ErrorMessage>
-			</FormWrapper>
-		</Container>
-	)
+  return (
+    <Layout>
+      <BackButton to="/" />
+      <Container>
+        <Title>Daftar sebagai</Title>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <RadioContainer>
+            <Radio
+              id="student"
+              label="Mahasiswa"
+              value="student"
+              ref={register}
+              defaultChecked={cacheRole === 'student' || true}
+            />
+            <Radio
+              id="professor"
+              label="Dosen"
+              value="professor"
+              ref={register}
+              defaultChecked={cacheRole === 'professor'}
+            />
+          </RadioContainer>
+          <Input
+            placeholder="Username"
+            name="username"
+            defaultValue={cacheUsername || ''}
+            ref={register}
+          />
+          <Input
+            placeholder="Password"
+            name="password"
+            type="password"
+            defaultValue={cachePassword || ''}
+            ref={register}
+          />
+          <Button type="submit">Lanjut</Button>
+        </Form>
+        <ErrorMessage>{errorMessage}</ErrorMessage>
+      </Container>
+    </Layout>
+  )
 }
 
 export default Step1

@@ -14,60 +14,56 @@ function AuthProvider({children}) {
   const getUser = () => {
     axios
       .get('http://localhost:4000/getUser')
-      .then((res) => {
-        setUser(res.data)
+      .then(({data}) => {
+        setUser(data)
         setLoading(false)
       })
       .catch((err) => {
+        // may caused by network error
         console.log('error from getUser context: ', err)
       })
   }
 
-  const login = (inputData, callback) => {
+  const login = async (inputData) => {
     const {role, username, password} = inputData
-    axios
-      .post(`http://localhost:4000/login/${role}`, {
+    const url = `http://localhost:4000/login/${role}`
+    try {
+      await axios.post(url, {
         username,
         password,
       })
-      .then(() => {
-        setLoading(false)
-        callback()
-        getUser()
-      })
-      .catch((err) => {
-        callback(err.response.data.message)
-      })
+      setLoading(true)
+      getUser()
+    } catch (error) {
+      throw error.response.data.message
+    }
   }
 
   const logout = () => {
     axios
       .get('http://localhost:4000/logout')
       .then(() => {
-        setLoading(true)
         setUser(null)
-        // window.location.reload()
-        setLoading(false)
+        window.location.reload()
       })
       .catch((err) => {
         console.log('error from logout context: ', err)
       })
   }
 
-  const signup = (data, callback) => {
-    axios
-      .post(`http://localhost:4000/signup`, {
-        ...data,
-      })
-      .then(() => {
-        setLoading(true)
-        callback()
-        getUser()
-      })
-      .catch((err) => {
-        console.log('error from signup context: ', err)
-        callback(err.response.data.message)
-      })
+  const signup = async (data) => {
+    const url = 'http://localhost:4000/signup'
+    try {
+      await axios.post(url, data)
+      setLoading(true)
+      getUser()
+    } catch (error) {
+      if (error.response) {
+        throw new Error(error.response.data.message)
+      }
+
+      throw error
+    }
   }
 
   useEffect(() => {
@@ -75,8 +71,8 @@ function AuthProvider({children}) {
   }, [])
 
   useEffect(() => {
-    if (user?.role === 'dosen') {
-      socket.emit('make-me-online', user.id)
+    if (user?.role === 'professor') {
+      socket.emit('makeMeOnline', user.id)
     }
   }, [user])
 

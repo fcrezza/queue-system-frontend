@@ -1,13 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
-
 import logoutSVG from '../../images/logout.svg'
 
 const Button = styled.button`
   padding: 0;
   background: none;
   border: 0;
-  outline: none;
   cursor: pointer;
 
   img {

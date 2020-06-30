@@ -23,7 +23,7 @@ const RadioInput = styled.div`
   .check {
     display: block;
     position: absolute;
-    border: 1px solid #222;
+    border: ${({theme}) => `1px solid ${theme.main}`};
     border-radius: 100%;
     height: 20px;
     width: 20px;
@@ -41,11 +41,11 @@ const RadioInput = styled.div`
   }
 
   input[type='radio']:checked ~ .check::before {
-    background: #222;
+    background: ${({theme}) => theme.main};
   }
 
   input[type='radio']:checked ~ .check {
-    border-color: #222;
+    border-color: ${({theme}) => theme.main};
   }
 `
 
@@ -53,7 +53,7 @@ const RadioLabel = styled.div`
   position: relative;
   margin-left: 1rem;
   font-size: 1.5rem;
-  color: #333;
+  color: ${({theme}) => theme.secondary};
 `
 
 function Radio(props, ref) {
@@ -62,7 +62,14 @@ function Radio(props, ref) {
   return (
     <RadioWrapper htmlFor={id}>
       <RadioInput>
-        <input type="radio" id={id} value={value} name="role" ref={ref} {...rest} />
+        <input
+          type="radio"
+          id={id}
+          value={value}
+          name="role"
+          ref={ref}
+          {...rest}
+        />
         <div className="check" />
       </RadioInput>
       <RadioLabel>{label}</RadioLabel>
