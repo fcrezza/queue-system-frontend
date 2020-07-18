@@ -1,83 +1,55 @@
 import React, {createContext, useContext, useEffect, useState} from 'react'
+import useSWR from 'swr'
 import axios from 'axios'
-import {useSocket} from './SocketContext'
 import Spinner from '../components/Spinner'
+import useAsyncError from '../hooks/useAsyncError'
 
 axios.defaults.withCredentials = true
 const AuthContext = createContext()
 
 function AuthProvider({children}) {
-  const socket = useSocket()
-  const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [loadingMessage, setLoadingMessage] = useState('')
+  const {data: user, isValidating, mutate, error} = useSWR('/user')
+  const setAsyncError = useAsyncError()
 
-  const getUser = () => {
-    axios
-      .get('http://localhost:4000/getUser')
-      .then(({data}) => {
-        setUser(data)
-        setLoading(false)
-      })
-      .catch((err) => {
-        // may caused by network error
-        console.log('error from getUser context: ', err)
-      })
-  }
+  useEffect(() => {
+    if (error) {
+      setAsyncError(error)
+    }
+  }, [error])
+
+  useEffect(() => {
+    if (!isValidating && typeof user === 'object') {
+      setLoading(false)
+    } else {
+      setLoading(true)
+    }
+  }, [isValidating, user])
 
   const login = async (inputData) => {
-    const {role, username, password} = inputData
-    const url = `http://localhost:4000/login/${role}`
-    try {
-      await axios.post(url, {
-        username,
-        password,
-      })
-      setLoading(true)
-      getUser()
-    } catch (error) {
-      throw error.response.data.message
-    }
+    setLoadingMessage('Login ...')
+    const url = 'http://localhost:4000/login'
+    await axios.post(url, inputData)
+    await mutate()
   }
 
-  const logout = () => {
-    axios
-      .get('http://localhost:4000/logout')
-      .then(() => {
-        setUser(null)
-        window.location.reload()
-      })
-      .catch((err) => {
-        console.log('error from logout context: ', err)
-      })
+  const logout = async () => {
+    setLoading(true)
+    setLoadingMessage('Logout ...')
+    await axios.get('http://localhost:4000/logout')
+    await mutate(null, false)
   }
 
   const signup = async (data) => {
+    setLoadingMessage('Signup ...')
     const url = 'http://localhost:4000/signup'
-    try {
-      await axios.post(url, data)
-      setLoading(true)
-      getUser()
-    } catch (error) {
-      if (error.response) {
-        throw new Error(error.response.data.message)
-      }
-
-      throw error
-    }
+    await axios.post(url, data)
+    await mutate()
   }
 
-  useEffect(() => {
-    getUser()
-  }, [])
-
-  useEffect(() => {
-    if (user?.role === 'professor') {
-      socket.emit('makeMeOnline', user.id)
-    }
-  }, [user])
-
   if (loading) {
-    return <Spinner>Loading ...</Spinner>
+    return <Spinner>{loadingMessage}</Spinner>
   }
 
   return (

@@ -1,9 +1,9 @@
 import React, {useRef} from 'react'
 import {Switch, Route} from 'react-router-dom'
+import {useAuth} from '../../context/AuthContext'
 import Step1 from './Step1'
 import Step2 from './Step2/index'
 import Step3 from './Step3'
-import {useAuth} from '../../context/AuthContext'
 
 function Signup({match, history}) {
   const {signup} = useAuth()
@@ -31,15 +31,11 @@ function Signup({match, history}) {
       ...cacheFormData.current,
       ...formData,
     }
-
-    try {
-      await signup(cacheFormData.current, callback)
-      sessionStorage.removeItem('formData')
-      cacheFormData.current = {}
-    } catch (error) {
-      throw error.message
-    }
+    await signup(cacheFormData.current, callback)
+    sessionStorage.removeItem('formData')
+    cacheFormData.current = {}
   }
+
   return (
     <div>
       <Switch>

@@ -1,57 +1,38 @@
-import React, {useState, useEffect} from 'react'
-import styled from 'styled-components'
+import React, {useEffect} from 'react'
+import useSWR, {mutate} from 'swr'
 import axios from 'axios'
+import {object, string, number} from 'yup'
 import {useForm} from 'react-hook-form'
 import Layout from '../../../layout'
 import useError from '../../../hooks/useError'
+import useAsyncError from '../../../hooks/useAsyncError'
 import Input from '../../../components/Input'
-import Select from '../../../components/Profile/Select'
+import Select, {ControlledSelect} from '../../../components/Select'
 import Spinner from '../../../components/Spinner'
+import Seo from '../../../components/Seo'
 import {BackButton, ButtonBlock} from '../../../components/Button'
+import {Container, Title, Form, ErrorMessage} from '../../../components/Form'
 
-const FormContainer = styled.div`
-  margin-top: 3rem;
-`
-
-const Title = styled.h1`
-  font-size: 2.5rem;
-  margin: 0 0 3rem;
-`
-
-const Form = styled.form`
-  & > * {
-    margin-bottom: 3.5rem;
-  }
-`
-
-const ErrorMessage = styled.p`
-  font-size: 1.4rem;
-  color: #ff304f;
-  margin-top: 2rem;
-  display: ${({error}) => (error ? 'block' : 'none')};
-`
-
-const ButtonBlockExtend = styled(ButtonBlock)`
-  background: ${({disabled}) => (disabled ? '#d9d9d9' : '#222')};
-  cursor: ${({disabled}) => (disabled ? 'default' : 'pointer')};
-`
+const validationSchema = object().shape({
+  nim: number()
+    .transform((value) => (value ? parseInt(value, 10) : undefined))
+    .required('NIM harus di isi'),
+  semester: number()
+    .transform((value) => (value ? parseInt(value, 10) : undefined))
+    .required('Semester harus diisi'),
+  username: string().required('Username harus di isi'),
+  fullname: string().required('Nama lengkap harus di isi'),
+  address: string().required('Alamat harus diisi'),
+  study: number().required('Prodi harus di isi'),
+  gender: number().required('Jenis kelamin harus diisi'),
+  professor: number().required('Dosen pembimbing harus diisi'),
+})
 
 function EditProfile({user, history}) {
-  const {register, handleSubmit, setValue, watch} = useForm()
-  const [studyPrograms, setStudyPrograms] = useState(
-    JSON.parse(localStorage.getItem('studyPrograms')),
-  )
-  const [genders, setGenders] = useState(
-    JSON.parse(localStorage.getItem('genders')),
-  )
-  const [professors, setProfessors] = useState(null)
-  const {errorMessage, setError} = useError({})
-  const [loading, setLoading] = useState(true)
-  const userStudyInput = parseInt(watch('study'), 10)
   const {
     id,
     semester,
-    professorID,
+    professor,
     username,
     fullname,
     study,
@@ -59,99 +40,81 @@ function EditProfile({user, history}) {
     gender,
     nim,
   } = user
+  const {register, handleSubmit, errors, setValue, formState, watch} = useForm({
+    reValidateMode: 'onSubmit',
+    validationSchema,
+  })
+  const studyValue = watch('study')
+  const professorValue = watch('professor')
+  const {data: studyPrograms, errorStudyPrograms} = useSWR('/studyPrograms')
+  const {data: genders, errorGenders} = useSWR('/genders')
+  const {data: professors, errorProfessors} = useSWR(
+    studyValue ? `/studyPrograms/${studyValue}/professors` : null,
+  )
+  const {errorMessage, setError} = useError(errors)
+  const setAsyncError = useAsyncError()
+  const {isSubmitting} = formState
+  const formattedProfessors =
+    professors &&
+    professors.map((p) => {
+      const {fullname: nama, ...rest} = p
+      return {nama, ...rest}
+    })
+
+  let selectedProfessorID = null
+  if (studyValue === study.id) {
+    selectedProfessorID = professor.id
+  } else if (studyValue !== study.id && formattedProfessors?.length) {
+    selectedProfessorID = formattedProfessors[0].id
+  }
 
   useEffect(() => {
     register({name: 'professor'})
     register({name: 'study'})
     register({name: 'gender'})
-    setValue('professor', professorID)
-    setValue('study', study.id)
+  }, [register])
+
+  useEffect(() => {
     setValue('gender', gender.id)
+    setValue('study', study.id)
   }, [])
 
   useEffect(() => {
-    if (!studyPrograms) {
-      const url = `http://localhost:4000/studyPrograms`
-      axios
-        .get(url)
-        .then(({data}) => {
-          setStudyPrograms(data)
-        })
-        .catch((err) => {
-          console.log('error form fetch studyPrograms: ', err)
-        })
+    if (selectedProfessorID) {
+      setValue('professor', selectedProfessorID)
     }
-  }, [])
+  }, [selectedProfessorID])
 
   useEffect(() => {
-    if (!genders) {
-      const url = 'http://localhost:4000/genders'
-      axios
-        .get(url)
-        .then(({data}) => {
-          setGenders(data)
-        })
-        .catch((err) => {
-          console.log('error form fetch genders: ', err)
-        })
+    if (errorGenders || errorProfessors || errorStudyPrograms) {
+      setAsyncError(errorGenders || errorProfessors || errorStudyPrograms)
     }
-  }, [])
+  }, [errorGenders, errorProfessors, errorStudyPrograms])
 
-  useEffect(() => {
-    if (userStudyInput) {
-      const url = `http://localhost:4000/professorsByStudyProgram/${userStudyInput}`
+  const onSubmit = async (formData) => {
+    try {
+      await axios.post(`http://localhost:4000/students/${id}`, formData)
+      await mutate('/user')
+      history.push('/profile', {status: 1})
+    } catch (err) {
+      if (err.response) {
+        setError(err.response.data.message)
+      }
 
-      axios
-        .get(url)
-        .then(({data}) => {
-          const professorData = data.map((d) => {
-            const {fullname: nama, ...rest} = d
-            return {nama, ...rest}
-          })
-          setProfessors(professorData)
-          if (userStudyInput !== study.id) {
-            setValue('professor', professorData[0].id)
-          }
-        })
-        .catch((err) => {
-          console.log('error from fetch dosen: ', err)
-        })
+      setAsyncError(err)
     }
-  }, [userStudyInput])
-
-  useEffect(() => {
-    if (!!professors && !!studyPrograms && !!genders) {
-      setLoading(false)
-    }
-  }, [professors, studyPrograms, genders])
-
-  const onSubmit = (formData) => {
-    const data = {
-      id,
-      ...formData,
-    }
-
-    axios
-      .post('http://localhost:4000/changeMahasiswaProfile', data)
-      .then(() => {
-        history.push('/profile', {status: 1})
-      })
-      .catch((error) => {
-        if (error.response) {
-          setError(error.response.data.message)
-        }
-      })
   }
 
-  if (loading) {
+  if (!formattedProfessors || !studyPrograms || !genders) {
     return <Spinner>Memuat data ...</Spinner>
   }
 
   return (
     <Layout>
-      <BackButton to="/profile" />
-      <FormContainer>
-        <Title>Ubah profil</Title>
+      <Seo title={`Edit profil | ${fullname}`} />
+      <BackButton />
+      <Container>
+        <Title>Edit profil</Title>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Input
             placeholder="Username"
@@ -173,7 +136,7 @@ function EditProfile({user, history}) {
           />
           <Select
             name="study"
-            defaultValue={study.id}
+            defaultValue={studyValue}
             placeholder="Prodi"
             setValue={setValue}
             items={studyPrograms}
@@ -198,17 +161,19 @@ function EditProfile({user, history}) {
             ref={register}
             defaultValue={address}
           />
-          <Select
-            name="professor"
-            defaultValue={professorID}
-            placeholder="Dosen pembimbing"
-            setValue={setValue}
-            items={professors}
-          />
-          <ButtonBlockExtend>Simpan</ButtonBlockExtend>
+          {formattedProfessors.length ? (
+            <ControlledSelect
+              name="professor"
+              selectedItemID={professorValue}
+              placeholder="Dosen pembimbing"
+              setValue={setValue}
+              items={formattedProfessors}
+            />
+          ) : null}
+          <ButtonBlock disabled={isSubmitting}>Simpan</ButtonBlock>
         </Form>
-        <ErrorMessage error={!!errorMessage}>{errorMessage}</ErrorMessage>
-      </FormContainer>
+        <ErrorMessage>{errorMessage}</ErrorMessage>
+      </Container>
     </Layout>
   )
 }

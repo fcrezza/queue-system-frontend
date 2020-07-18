@@ -23,7 +23,7 @@ const RadioInput = styled.div`
   .check {
     display: block;
     position: absolute;
-    border: ${({theme}) => `1px solid ${theme.main}`};
+    border: ${({theme}) => `1px solid ${theme.primary}`};
     border-radius: 100%;
     height: 20px;
     width: 20px;
@@ -41,11 +41,11 @@ const RadioInput = styled.div`
   }
 
   input[type='radio']:checked ~ .check::before {
-    background: ${({theme}) => theme.main};
+    background: ${({theme}) => theme.primary};
   }
 
   input[type='radio']:checked ~ .check {
-    border-color: ${({theme}) => theme.main};
+    border-color: ${({theme}) => theme.primary};
   }
 `
 
@@ -53,7 +53,7 @@ const RadioLabel = styled.div`
   position: relative;
   margin-left: 1rem;
   font-size: 1.5rem;
-  color: ${({theme}) => theme.secondary};
+  color: ${({theme}) => theme.primaryLight};
 `
 
 function Radio(props, ref) {

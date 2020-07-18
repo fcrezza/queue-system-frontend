@@ -1,68 +1,54 @@
 import React from 'react'
 import axios from 'axios'
-import styled from 'styled-components'
+import {object, string} from 'yup'
 import {useForm} from 'react-hook-form'
-import Layout from '../../../layout'
 import useError from '../../../hooks/useError'
+import Layout from '../../../layout'
 import Input from '../../../components/Input'
+import Seo from '../../../components/Seo'
 import {BackButton, ButtonBlock} from '../../../components/Button'
+import {Container, Title, Form, ErrorMessage} from '../../../components/Form'
 
-const FormContainer = styled.div`
-  margin-top: 5rem;
-`
+const validationSchema = object().shape({
+  oldPassword: string()
+    .min(8, ({min}) => {
+      return `Password lama minimal mengandung ${min} karakter`
+    })
+    .required('Password lama harus diisi'),
+  newPassword: string()
+    .min(8, ({min}) => {
+      return `Password baru minimal mengandung ${min} karakter`
+    })
+    .required('Password baru harus diisi'),
+})
 
-const Title = styled.h1`
-  font-size: 3rem;
-  margin: 0 0 3rem;
-`
+function ChangePassword({id, fullname, history}) {
+  const {handleSubmit, register, errors, formState} = useForm({
+    reValidateMode: 'onSubmit',
+    validationSchema,
+  })
+  const {errorMessage, setError} = useError(errors)
+  const {isSubmitting} = formState
 
-const Form = styled.form`
-  & > * {
-    margin-bottom: 3.5rem;
-  }
-`
-
-const ErrorMessage = styled.p`
-  font-size: 1.4rem;
-  color: #ff304f;
-  margin-top: 2rem;
-  display: ${({error}) => (error ? 'block' : 'none')};
-`
-
-const ButtonBlockExtend = styled(ButtonBlock)`
-  background: ${({disabled}) => (disabled ? '#666' : '#222')};
-  cursor: ${({disabled}) => (disabled ? 'default' : 'pointer')};
-`
-
-function ChangePassword({id, role, history}) {
-  const {handleSubmit, register, watch} = useForm()
-  const {errorMessage, setError} = useError({})
-  const oldPassword = watch('oldPassword') || ''
-  const newPassword = watch('newPassword') || ''
-  const buttonDisable = oldPassword.length < 8 || newPassword.length < 8
-  const onSubmit = (formData) => {
-    const data = {
-      id,
-      role,
-      ...formData,
+  const onSubmit = async (formData) => {
+    try {
+      await axios.post(
+        `http://localhost:4000/professors/${id}/password`,
+        formData,
+      )
+      history.push('/profile', {status: 1})
+    } catch (err) {
+      if (err.response) {
+        setError(err.response.data.message)
+      }
     }
-
-    axios
-      .post('http://localhost:4000/changePassword', data)
-      .then(() => {
-        history.push('/profile', {status: 1})
-      })
-      .catch((err) => {
-        if (err.response) {
-          setError(err.response.data.message)
-        }
-      })
   }
 
   return (
     <Layout>
-      <BackButton to="/profile" />
-      <FormContainer>
+      <Seo title={`Ganti password | ${fullname}`} />
+      <BackButton />
+      <Container>
         <Title>Ganti password</Title>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Input
@@ -77,12 +63,10 @@ function ChangePassword({id, role, history}) {
             name="newPassword"
             ref={register}
           />
-          <ButtonBlockExtend disabled={buttonDisable}>
-            Ganti password
-          </ButtonBlockExtend>
+          <ButtonBlock disabled={isSubmitting}>Ganti password</ButtonBlock>
         </Form>
-        <ErrorMessage error={!!errorMessage}>{errorMessage}</ErrorMessage>
-      </FormContainer>
+        <ErrorMessage>{errorMessage}</ErrorMessage>
+      </Container>
     </Layout>
   )
 }

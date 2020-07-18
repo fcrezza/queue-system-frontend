@@ -1,11 +1,12 @@
 import {useState, useEffect} from 'react'
 
-function useError(errors) {
+function useError(errors = {}) {
   const [errorMessage, setError] = useState(null)
 
   useEffect(() => {
-    if (Object.keys(errors).length) {
-      const {message} = errors[Object.keys(errors)[0]]
+    const errorKeys = Object.keys(errors)
+    if (errorKeys.length) {
+      const {message} = errors[errorKeys[0]]
       setError(message)
     }
   }, [errors])

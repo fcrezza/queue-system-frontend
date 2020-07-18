@@ -3,7 +3,8 @@ import {Redirect} from 'react-router-dom'
 import StudentForm from './StudentForm'
 import ProfessorForm from './ProfessorForm'
 
-function Step2({cacheFormData, nextStep, sendData}) {
+function Step2(props) {
+  const {cacheFormData, nextStep, sendData} = props
   const {role} = cacheFormData
 
   if (role === 'professor') {

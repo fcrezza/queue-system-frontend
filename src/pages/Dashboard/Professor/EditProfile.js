@@ -1,104 +1,80 @@
-import React, {useEffect, useState} from 'react'
-import styled from 'styled-components'
+import React, {useEffect} from 'react'
 import axios from 'axios'
+import {object, number, string} from 'yup'
+import useSWR, {mutate} from 'swr'
 import {useForm} from 'react-hook-form'
 import Layout from '../../../layout'
 import useError from '../../../hooks/useError'
+import useAsyncError from '../../../hooks/useAsyncError'
 import Input from '../../../components/Input'
-import Select from '../../../components/Profile/Select'
+import Seo from '../../../components/Seo'
+import Select from '../../../components/Select'
 import Spinner from '../../../components/Spinner'
 import {BackButton, ButtonBlock} from '../../../components/Button'
+import {Container, Title, Form, ErrorMessage} from '../../../components/Form'
 
-const FormContainer = styled.div`
-  margin-top: 5rem;
-`
-
-const Title = styled.h1`
-  font-size: 2.5rem;
-  margin: 0 0 3rem;
-`
-
-const Form = styled.form`
-  & > * {
-    margin-bottom: 3.5rem;
-  }
-`
-
-const ErrorMessage = styled.p`
-  font-size: 1.4rem;
-  color: #ff304f;
-  margin-top: 2rem;
-  display: ${({error}) => (error ? 'block' : 'none')};
-`
+const validationSchema = object().shape({
+  nip: number()
+    .transform((value) => (value ? parseInt(value, 10) : undefined))
+    .required('NIP harus di isi'),
+  username: string().required('Username harus di isi'),
+  fullname: string().required('Nama lengkap harus di isi'),
+  address: string().required('Alamat harus diisi'),
+  faculty: number().required('Fakultas harus di isi'),
+  gender: number().required('Jenis kelamin harus diisi'),
+})
 
 function EditProfile({user, history}) {
-  const {register, handleSubmit, setValue} = useForm()
-  const [faculties, setFaculties] = useState(
-    JSON.parse(localStorage.getItem('faculties')),
-  )
-  const [genders, setGenders] = useState(
-    JSON.parse(localStorage.getItem('genders')),
-  )
-  const [loading, setLoading] = useState(true)
-  const {errorMessage, setError} = useError({})
+  const {register, handleSubmit, setValue, formState, errors} = useForm({
+    reValidateMode: 'onSubmit',
+    validationSchema,
+  })
+  const {data: faculties, error: errorFaculties} = useSWR('/faculties')
+  const {data: genders, error: errorGenders} = useSWR('/genders')
+  const {errorMessage, setError} = useError(errors)
   const {id, gender, username, nip, address, fullname, faculty} = user
+  const {isSubmitting} = formState
+  const setAsyncError = useAsyncError()
 
   useEffect(() => {
     register('gender')
     register('faculty')
-    setValue('gender', gender.id)
-    setValue('faculty', faculty.id)
   }, [register])
 
   useEffect(() => {
-    if (faculties && genders) {
-      setLoading(false)
-    }
-  }, [faculties, genders])
-
-  useEffect(() => {
-    if (!genders) {
-      axios.get('http://localhost:4000/genders').then(({data}) => {
-        setGenders(data)
-        localStorage.setItem('genders', JSON.stringify(data))
-      })
-    }
+    setValue('gender', gender.id)
+    setValue('faculty', faculty.id)
   }, [])
 
   useEffect(() => {
-    if (!faculties) {
-      axios.get('http://localhost:4000/faculties').then(({data}) => {
-        setFaculties(data)
-        localStorage.setItem('faculties', JSON.stringify(data))
-      })
+    if (errorGenders || errorFaculties) {
+      setAsyncError(errorGenders || errorFaculties)
     }
-  }, [])
+  }, [errorGenders, errorFaculties])
 
-  const onSubmit = (formData) => {
-    const data = {
-      id,
-      ...formData,
+  const onSubmit = async (formData) => {
+    try {
+      await axios.post(`http://localhost:4000/professors/${id}`, formData)
+      await mutate('/user')
+      history.push('/profile', {status: 1})
+    } catch (error) {
+      if (error.response) {
+        setError(error.response.data.message)
+      }
+
+      setAsyncError(error)
     }
-    axios
-      .post('http://localhost:4000/changeDosenProfile', data)
-      .then(() => {
-        history.push('/profile', {status: 1})
-      })
-      .catch((error) => {
-        if (error.response) {
-          setError(error.response.data.message)
-        }
-      })
   }
 
-  if (loading) {
+  if (!faculties || !genders) {
     return <Spinner>Memuat data ...</Spinner>
   }
 
   return (
     <Layout>
-      <BackButton to="/profile" />
-      <FormContainer>
+      <Seo title={`Edit profil || ${fullname}`} />
+      <BackButton />
+      <Container>
         <Title>Ubah profil</Title>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Input
@@ -139,10 +115,10 @@ function EditProfile({user, history}) {
             ref={register}
             defaultValue={address}
           />
-          <ButtonBlock>Simpan</ButtonBlock>
+          <ButtonBlock disabled={isSubmitting}>Simpan</ButtonBlock>
         </Form>
-        <ErrorMessage error={!!errorMessage}>{errorMessage}</ErrorMessage>
-      </FormContainer>
+        <ErrorMessage>{errorMessage}</ErrorMessage>
+      </Container>
     </Layout>
   )
 }

@@ -1,33 +1,68 @@
 import React from 'react'
 import styled from 'styled-components'
-import {Link as RouterLink} from 'react-router-dom'
+import {useHistory} from 'react-router-dom'
 import backArrowImg from '../images/back-arrow.svg'
+import logoutSVG from '../images/logout.svg'
 
-const Link = styled(RouterLink)`
-  text-decoration: none;
+const BaseButton = styled.button`
+  background: none;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
 `
 
-export const Button = styled.button`
-  background: ${({theme}) => theme.main};
-  color: ${({theme}) => theme.textMainLight};
+const Button = styled(BaseButton)`
+  color: ${({theme}) => theme.secondary};
   padding: 1.2rem 1.8rem;
-  border: 0;
-  border-radius: 5rem;
-  font-size: 1.5rem;
-  cursor: pointer;
+  border-radius: 10px;
+  font-size: 1.4rem;
   display: block;
   text-align: center;
-  font-weight: 700;
+  font-weight: 600;
+  background: ${({disabled, theme}) =>
+    disabled ? theme.primaryLight : theme.primary};
+  cursor: ${({disabled}) => (disabled ? 'default' : 'pointer')};
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: ${({disabled}) => !disabled && 'scale(0.98)'};
+  }
 `
 
-export const ButtonBlock = styled(Button)`
+const ButtonBlock = styled(Button)`
   width: 100%;
 `
 
-export function BackButton({to, ...rest}) {
+const BackButtonImg = styled.img.attrs({
+  src: backArrowImg,
+  alt: '',
+})`
+  display: block;
+`
+
+const LogoutBtn = styled(BaseButton)`
+  img {
+    display: block;
+  }
+`
+
+function BackButton() {
+  const {goBack, length, push} = useHistory()
+  const navigate = length > 2 ? goBack : () => push('/')
+
   return (
-    <Link to={to} {...rest}>
-      <img src={backArrowImg} alt="" />
-    </Link>
+    <BaseButton onClick={navigate}>
+      <BackButtonImg />
+    </BaseButton>
   )
 }
+
+function LogoutButton({onClick}) {
+  return (
+    <LogoutBtn onClick={onClick}>
+      <img src={logoutSVG} alt="" />
+    </LogoutBtn>
+  )
+}
+
+export {Button, ButtonBlock, LogoutButton, BackButton}

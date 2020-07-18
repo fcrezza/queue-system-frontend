@@ -1,11 +1,12 @@
-import React, {useRef, useContext, createContext, useEffect} from 'react'
+import React, {useContext, createContext, useEffect} from 'react'
 import io from 'socket.io-client'
 
 const SocketContext = createContext()
+const socket = io('http://localhost:4000', {
+  autoConnect: false,
+})
 
 function SocketProvider({children}) {
-  const {current: socket} = useRef(io('http://localhost:4000'))
-
   useEffect(() => {
     socket.open()
 

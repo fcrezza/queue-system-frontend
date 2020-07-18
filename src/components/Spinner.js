@@ -37,7 +37,7 @@ const InnerLoading = styled.div`
   position: absolute;
   width: 35px;
   height: 35px;
-  border: 4px solid #222222;
+  border: ${({theme}) => `4px solid ${theme.primary}`};
   border-top-color: transparent;
   border-radius: 50%;
   animation: ${loadingKeyframe} 1s linear infinite;
@@ -49,7 +49,7 @@ const InnerLoading = styled.div`
 const SpinnerText = styled.p`
   margin: 1rem 0 0;
   font-size: 1.6rem;
-  color: #333;
+  color: ${({theme}) => theme.primaryLight};
   text-align: center;
 `
 

@@ -4,167 +4,123 @@ import {Link as RouterLink} from 'react-router-dom'
 import {useSocket} from '../../../context/SocketContext'
 import Layout from '../../../layout'
 import Spinner from '../../../components/Spinner'
-import Devider from '../../../components/Dashboard/Devider'
+import Seo from '../../../components/Seo'
+import Devider from '../../../components/Devider'
 import {BackButton, Button} from '../../../components/Button'
 import {
   Title,
   Subtitle,
-  FlexContainer,
   AntrianContainer,
 } from '../../../components/Dashboard/Section'
-import {
-  ProfileContainer,
-  AvatarContainer,
-  Avatar,
-  ProfileData,
-  ProfileHeading,
-  ProfileText,
-} from '../../../components/Dashboard/Profile'
-import {mahasiswaAvatars} from '../../../images/userAvatars'
-import nullSVG from '../../../images/null.svg'
-
-const ControlContainer = styled(FlexContainer)`
-  align-items: center;
-`
-
-const Wrapper = styled.div`
-  margin-bottom: 4rem;
-`
-
-const Null = styled.div`
-  text-align: center;
-
-  & > button,
-  img {
-    margin: auto;
-  }
-
-  img {
-    display: block;
-  }
-
-  p {
-    color: #333;
-    margin: 2rem 0;
-    font-size: 1.6rem;
-  }
-`
+import studentAvatars from '../../../images/students'
+import PersonProfileCard from '../../../components/PersonProfileCard'
+import NoData from '../../../components/NoData'
 
 const Link = styled(RouterLink)`
   text-decoration: none;
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: ${({color}) => color || '#333'};
-  outline: none;
-
-  &:hover,
-  &:focus {
-    text-decoration: underline;
-  }
+  padding: 0.6rem 0.8rem;
 `
 
-function Antrian({id}) {
+const ControlContainer = styled.div`
+  margin: 4rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
+function Queue({id, fullname}) {
   const socket = useSocket()
-  const [queue, setQueue] = useState(null)
-  const [active, setActive] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [queue, setQueue] = useState(undefined)
+  const activeQueue = queue?.find((q) => q.status === 'active')
+  const pendingQueue = queue?.filter((q) => q.status === 'pending')
 
   useEffect(() => {
     socket.emit('getQueue', id)
     socket.on('newData', (data, profID) => {
-      const filterActiveQueue = data.filter((a) => a.status === 'active')[0]
-      const filterPendingQueue = data.filter((a) => a.status === 'pending')
       if (profID === id) {
-        if (filterActiveQueue) {
-          setActive(filterActiveQueue)
-        }
-
-        setQueue(filterPendingQueue)
+        setQueue(data)
+      } else {
+        setQueue(null)
       }
     })
   }, [])
 
-  useEffect(() => {
-    if (queue) {
-      setLoading(false)
-    }
-  }, [queue])
-
-  const NextQueue = () => {
-    socket.emit('nextQueue', active, queue[0], id)
-    setActive(null)
+  const nextQueue = () => {
+    socket.emit('nextQueue', activeQueue, pendingQueue[0])
   }
 
-  if (loading) {
+  if (typeof queue !== 'object') {
     return <Spinner>Memuat data ...</Spinner>
   }
 
   return (
     <Layout>
-      <Wrapper>
-        <BackButton to="/" />
-      </Wrapper>
-      <Wrapper>
-        <Title>Antrian</Title>
-        <Subtitle>
-          Manage antrian mahasiswa yang akan melakukan bimbingan
-        </Subtitle>
-      </Wrapper>
+      <Seo title={`Antrian | ${fullname}`} />
+      <BackButton />
       <ControlContainer>
-        <Subtitle>{queue?.length} mahasiswa menunggu</Subtitle>
-        <Button onClick={NextQueue} disabled={!queue.length && !active}>
+        <div>
+          <Title>Antrian</Title>
+          <Subtitle>
+            {pendingQueue.length
+              ? `${pendingQueue.length} mahasiswa menunggu`
+              : null}
+          </Subtitle>
+        </div>
+        <Button disabled={!queue.length} onClick={nextQueue}>
           Next
         </Button>
       </ControlContainer>
       <AntrianContainer>
-        {active ? (
-          <div>
-            <ProfileContainer>
-              <AvatarContainer>
-                <Avatar
-                  src={mahasiswaAvatars[active.avatar]}
-                  alt={`${active.fullname} avatar`}
-                />
-              </AvatarContainer>
-              <ProfileData>
-                <ProfileHeading>{active.fullname}</ProfileHeading>
-                <ProfileText>Mahasiswa {active.study}</ProfileText>
-                <Link to={`/students/${active.id}`}>Lihat profil →</Link>
-              </ProfileData>
-            </ProfileContainer>
+        {activeQueue ? (
+          <>
+            <PersonProfileCard.Container>
+              <PersonProfileCard.Avatar
+                src={studentAvatars[activeQueue.avatar]}
+                alt={`${activeQueue.fullname} avatar`}
+              />
+              <PersonProfileCard.Content
+                fullname={activeQueue.fullname}
+                study={activeQueue.study}
+              />
+              <PersonProfileCard.Button
+                as={Link}
+                to={`/students/${activeQueue.id}`}
+              >
+                Lihat
+              </PersonProfileCard.Button>
+            </PersonProfileCard.Container>
             <Devider />
-          </div>
+          </>
         ) : null}
-        {queue.map((x) => {
-          return (
-            <ProfileContainer key={x.id}>
-              <AvatarContainer>
-                <Avatar
-                  src={mahasiswaAvatars[x.avatar]}
-                  alt={`${x.fullname} avatar`}
-                />
-              </AvatarContainer>
-              <ProfileData>
-                <ProfileHeading>{x.fullname}</ProfileHeading>
-                <ProfileText>Mahasiswa {x.study}</ProfileText>
-                <Link to={`/students/${x.id}`}>Lihat profil →</Link>
-              </ProfileData>
-            </ProfileContainer>
+        {queue.length ? (
+          pendingQueue.map(
+            ({fullname: studentName, id: studentID, avatar, study}) => {
+              return (
+                <PersonProfileCard.Container>
+                  <PersonProfileCard.Avatar
+                    src={studentAvatars[avatar]}
+                    alt={`${studentName} avatar`}
+                  />
+                  <PersonProfileCard.Content
+                    fullname={studentName}
+                    study={study}
+                  />
+                  <PersonProfileCard.Button
+                    as={Link}
+                    to={`/students/${studentID}`}
+                  >
+                    Lihat{' '}
+                  </PersonProfileCard.Button>
+                </PersonProfileCard.Container>
+              )
+            },
           )
-        })}
-        {!queue.length && !active ? <NoQueue /> : null}
+        ) : (
+          <NoData message="Tidak ada mahasiswa yang mengantri" />
+        )}
       </AntrianContainer>
     </Layout>
   )
 }
 
-export default Antrian
-
-function NoQueue() {
-  return (
-    <Null>
-      <img src={nullSVG} alt="" />
-      <p>Belum ada yang mengantri</p>
-    </Null>
-  )
-}
+export default Queue

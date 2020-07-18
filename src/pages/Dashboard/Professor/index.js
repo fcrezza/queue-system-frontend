@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {Route, Switch} from 'react-router-dom'
 import {useAuth} from '../../../context/AuthContext'
 import Home from './Home'
@@ -7,82 +7,69 @@ import ChangePassword from './ChangePassword'
 import EditProfile from './EditProfile'
 import StudentProfile from './StudentProfile'
 import StudentList from './StudentList'
+import NotFound from '../../NotFound'
 import Queue from './Queue'
-
-function generateGreetingMessage(id, fullname) {
-  if (id === 1) {
-    return `Halo, Pak ${fullname.slice(0, fullname.indexOf(' '))}`
-  }
-
-  return `Halo, Bu ${fullname.slice(0, fullname.indexOf(' '))}`
-}
+import {useSocket} from '../../../context/SocketContext'
 
 function ProfessorDashboard({match}) {
   const {user} = useAuth()
-  const {
-    id,
-    role,
-    gender,
-    username,
-    nip,
-    address,
-    fullname,
-    avatar,
-    faculty,
-  } = user
-  const greetingMessage = generateGreetingMessage(gender.id, fullname)
+  const socket = useSocket()
+  const {id, fullname, avatar, faculty} = user
+
+  useEffect(() => {
+    socket.emit('makeMeOnline')
+  }, [])
 
   return (
     <Switch>
       <Route
-        path={`${match.path}profile/change-password`}
-        render={(routeProps) => (
-          <ChangePassword id={id} role={role} {...routeProps} />
+        exact
+        path={match.path}
+        render={() => (
+          <Home
+            avatar={avatar}
+            fullname={fullname}
+            facultyName={faculty.name}
+          />
         )}
       />
       <Route
+        exact
+        path={`${match.path}profile/change-password`}
+        render={({history}) => (
+          <ChangePassword id={id} fullname={fullname} history={history} />
+        )}
+      />
+      <Route
+        exact
         path={`${match.path}profile/edit`}
         render={(routeProps) => <EditProfile user={user} {...routeProps} />}
       />
       <Route
+        exact
         path={`${match.path}profile`}
-        render={(routeProps) => (
-          <Profile
-            username={username}
-            fullname={fullname}
-            nip={nip}
-            avatar={avatar}
-            address={address}
-            genderName={gender.name}
-            facultyName={faculty.name}
-            {...routeProps}
-          />
-        )}
+        render={() => <Profile user={user} />}
       />
       <Route
+        exact
         path={`${match.path}students/:id`}
         render={(routeProps) => <StudentProfile {...routeProps} />}
       />
       <Route
+        exact
         path={`${match.path}students`}
-        render={(routeProps) => <StudentList id={id} {...routeProps} />}
-      />
-      <Route
-        path={`${match.path}queue`}
-        render={(routeProps) => <Queue id={id} {...routeProps} />}
-      />
-      <Route
-        path={match.path}
         render={(routeProps) => (
-          <Home
-            greetingMessage={greetingMessage}
-            avatar={avatar}
-            fullname={fullname}
-            facultyName={faculty.name}
-            {...routeProps}
-          />
+          <StudentList id={id} fullname={fullname} {...routeProps} />
         )}
       />
+      <Route
+        exact
+        path={`${match.path}queue`}
+        render={(routeProps) => (
+          <Queue id={id} fullname={fullname} {...routeProps} />
+        )}
+      />
+      <Route component={NotFound} />
     </Switch>
   )
 }

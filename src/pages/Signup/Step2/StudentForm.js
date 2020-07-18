@@ -1,122 +1,80 @@
-import React, {useState, useEffect} from 'react'
+import React, {useEffect} from 'react'
 import axios from 'axios'
+import useSWR from 'swr'
 import {useForm} from 'react-hook-form'
 import {object, string, number} from 'yup'
 import Input from '../../../components/Input'
 import Spinner from '../../../components/Spinner'
 import Layout from '../../../layout'
+import Seo from '../../../components/Seo'
+import useAsyncError from '../../../hooks/useAsyncError'
 import useError from '../../../hooks/useError'
 import {Button, BackButton} from '../../../components/Button'
-import Select from '../../../components/Signup/Select'
+import Select from '../../../components/Select'
 import {Container, Form, Title, ErrorMessage} from '../../../components/Form'
 
-const validationSchema = (studyPrograms, genders) =>
-  object().shape({
-    nim: number()
-      .transform((value) => (value ? parseInt(value, 10) : undefined))
-      .required('NIM harus di isi'),
-    semester: number()
-      .transform((value) => (value ? parseInt(value, 10) : undefined))
-      .required('Semester harus diisi'),
-    fullname: string().required('Nama lengkap harus di isi'),
-    address: string().required('Alamat harus diisi'),
-    study: number()
-      .oneOf(studyPrograms.map((value) => value.id))
-      .required('Prodi harus di isi'),
-    gender: number()
-      .oneOf(genders.map((value) => value.id))
-      .required('Jenis kelamin harus diisi'),
-  })
+const validationSchema = object().shape({
+  nim: number()
+    .transform((value) => (value ? parseInt(value, 10) : undefined))
+    .required('NIM harus di isi'),
+  semester: number()
+    .transform((value) => (value ? parseInt(value, 10) : undefined))
+    .min(1, 'Masukan Semester yang valid')
+    .required('Semester harus diisi'),
+  fullname: string().required('Nama lengkap harus di isi'),
+  address: string().required('Alamat harus diisi'),
+  study: number().required('Prodi harus di isi'),
+  gender: number().required('Jenis kelamin harus diisi'),
+})
 
 function MahasiswaForm({nextStep, cacheFormData}) {
-  const [loading, setLoading] = useState(true)
-  const [studyPrograms, setStudyPrograms] = useState(
-    JSON.parse(localStorage.getItem('studyPrograms')) || [],
-  )
-  const [genders, setGenders] = useState(
-    JSON.parse(localStorage.getItem('genders')) || [],
-  )
+  const {data: studyPrograms = [], error: studyError} = useSWR('/studyPrograms')
+  const {data: genders = [], error: genderError} = useSWR('/genders')
 
-  const {register, errors, handleSubmit, setValue} = useForm({
+  const {register, errors, handleSubmit, setValue, formState} = useForm({
     reValidateMode: 'onSubmit',
-    validationSchema: validationSchema(studyPrograms, genders),
+    validationSchema,
   })
   const {errorMessage, setError} = useError(errors)
+  const setAsyncError = useAsyncError()
+  const {isSubmitting} = formState
 
   useEffect(() => {
     register({name: 'gender'})
     register({name: 'study'})
     setValue('study', cacheFormData.study)
     setValue('gender', cacheFormData.gender)
-  }, [])
+  }, [register])
 
-  useEffect(() => {
-    if (!studyPrograms.length) {
-      axios
-        .get('http://localhost:4000/studyPrograms')
-        .then(({data}) => {
-          setStudyPrograms(data)
-          localStorage.setItem('studyPrograms', JSON.stringify(data))
-        })
-        .catch((error) => {
-          if (error.response) {
-            setError(error.response.data.message)
-          } else {
-            setError('Pastikan kamu terhubung internet')
-          }
-        })
+  const onSubmit = async (formData) => {
+    try {
+      const url = `http://localhost:4000/students/nim/${formData.nim}`
+      await axios.get(url)
+      nextStep(formData, 3)
+    } catch (err) {
+      if (err.response) {
+        setError(err.response.data.message)
+        return
+      }
+
+      setAsyncError(err)
     }
-  }, [])
-
-  useEffect(() => {
-    if (!genders.length) {
-      axios
-        .get('http://localhost:4000/genders')
-        .then(({data}) => {
-          setGenders(data)
-          localStorage.setItem('genders', JSON.stringify(data))
-        })
-        .catch((error) => {
-          if (error.response) {
-            setError(error.response.data.message)
-          } else {
-            setError('Pastikan kamu terhubung internet')
-          }
-        })
-    }
-  }, [])
-
-  useEffect(() => {
-    if ((studyPrograms.length, genders.length)) {
-      setLoading(false)
-    }
-  }, [studyPrograms, genders])
-
-  const onSubmit = (formData) => {
-    axios
-      .post('http://localhost:4000/checkUserByIdentity', {
-        userIdentity: formData.nim,
-        role: 'student',
-      })
-      .then(() => {
-        nextStep(formData, 3)
-      })
-      .catch((err) => {
-        if (err.response) {
-          setError(err.response.data.message)
-        } else {
-          setError('Pastikan kamu mempunyai internet koneksi')
-        }
-      })
   }
 
-  if (loading) {
+  useEffect(() => {
+    if (studyError || genderError) {
+      setAsyncError(studyError || genderError)
+    }
+  }, [studyError, genderError])
+
+  if (!studyPrograms.length || !genders.length) {
     return <Spinner>Memuat data ...</Spinner>
   }
 
   return (
     <Layout>
-      <BackButton to="/signup" />
+      <Seo title="Signup step-2 | UNIQUEUE" />
+      <BackButton />
       <Container>
         <Title>Data diri mahasiswa</Title>
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -160,7 +118,9 @@ function MahasiswaForm({nextStep, cacheFormData}) {
             defaultValue={cacheFormData.semester || ''}
             ref={register}
           />
-          <Button type="submit">Lanjut</Button>
+          <Button disabled={isSubmitting} type="submit">
+            Lanjut
+          </Button>
         </Form>
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </Container>

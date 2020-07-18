@@ -1,133 +1,90 @@
-import React, {useState, useEffect} from 'react'
+import React, {useEffect} from 'react'
 import axios from 'axios'
+import useSWR from 'swr'
 import {useForm} from 'react-hook-form'
 import {object, string, number} from 'yup'
 import {useHistory} from 'react-router-dom'
 import useError from '../../../hooks/useError'
-import Select from '../../../components/Signup/Select'
+import useAsyncError from '../../../hooks/useAsyncError'
+import Select from '../../../components/Select'
+import Seo from '../../../components/Seo'
 import Input from '../../../components/Input'
 import Layout from '../../../layout'
 import Spinner from '../../../components/Spinner'
-import {Button, BackButton} from '../../../components/Button'
+import {ButtonBlock, BackButton} from '../../../components/Button'
 import {Container, Form, Title, ErrorMessage} from '../../../components/Form'
 
-const dosenAvatars = {
-  male: ['dosenMale1', 'dosenMale2', 'dosenMale3'],
-  female: ['dosenFemale1', 'dosenFemale2', 'dosenFemale3'],
+const professorAvatars = {
+  male: ['professorMale1', 'professorMale2', 'professorMale3'],
+  female: ['professorFemale1', 'professorFemale2', 'professorFemale3'],
 }
 
-const validationSchema = (faculties, genders) =>
-  object().shape({
-    nip: number()
-      .transform((value) => (value ? parseInt(value, 10) : undefined))
-      .required('NIP harus di isi'),
-    fullname: string().required('Nama lengkap harus di isi'),
-    address: string().required('Alamat harus diisi'),
-    faculty: number()
-      .oneOf(faculties.map((value) => value.id))
-      .required('fakultas harus di isi'),
-    gender: number()
-      .oneOf(genders.map((value) => value.id))
-      .required('Jenis kelamin harus diisi'),
-  })
+const validationSchema = object().shape({
+  nip: number()
+    .transform((value) => (value ? parseInt(value, 10) : undefined))
+    .required('NIP harus di isi'),
+  fullname: string().required('Nama lengkap harus di isi'),
+  address: string().required('Alamat harus diisi'),
+  faculty: number().required('fakultas harus di isi'),
+  gender: number().required('Jenis kelamin harus diisi'),
+})
 
 function DosenForm({sendData, cacheFormData}) {
   const history = useHistory()
-  const [loading, setLoading] = useState(true)
-  const [faculties, setFaculties] = useState(
-    JSON.parse(localStorage.getItem('faculties')) || [],
-  )
-  const [genders, setGenders] = useState(
-    JSON.parse(localStorage.getItem('genders')) || [],
-  )
-  const {register, errors, handleSubmit, setValue} = useForm({
+  const {data: genders = [], error: gendersError} = useSWR('/genders')
+  const {data: faculties = [], error: facultiesError} = useSWR('/faculties')
+  const {register, errors, handleSubmit, setValue, formState} = useForm({
     reValidateMode: 'onSubmit',
-    validationSchema: validationSchema(faculties, genders),
+    validationSchema,
   })
   const {errorMessage, setError} = useError(errors)
+  const setAsyncError = useAsyncError()
+  const {isSubmitting} = formState
 
   useEffect(() => {
-    if (faculties.length && genders.length) {
-      setLoading(false)
+    if (facultiesError || gendersError) {
+      setAsyncError(facultiesError || gendersError)
     }
-  }, [faculties, genders])
+  }, [facultiesError, gendersError])
 
   useEffect(() => {
     register({name: 'gender'})
     register({name: 'faculty'})
-  }, [])
-
-  useEffect(() => {
-    if (!faculties.length) {
-      axios
-        .get('http://localhost:4000/faculties')
-        .then(({data}) => {
-          setFaculties(data)
-          localStorage.setItem('faculties', JSON.stringify(data))
-        })
-        .catch((err) => {
-          if (err.response) {
-            setError(err.response.data.message)
-          } else {
-            setError('Gagal memuat fakultas')
-          }
-        })
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!genders.length) {
-      axios
-        .get('http://localhost:4000/genders')
-        .then(({data}) => {
-          setGenders(data)
-          localStorage.setItem('genders', JSON.stringify(data))
-        })
-        .catch((err) => {
-          if (err.response) {
-            setError(err.response.data.message)
-          } else {
-            setError('Gagal memuat jenis kelamin')
-          }
-        })
-    }
-  }, [])
+  }, [register])
 
   const onSubmit = async (formData) => {
-    const url = 'http://localhost:4000/checkUserByIdentity'
+    const url = `http://localhost:4000/professors/nip/${formData.nip}`
     try {
-      await axios.post(url, {
-        userIdentity: formData.nip,
-        role: 'professor',
-      })
+      await axios.get(url)
       const randomNumber = Math.floor(Math.random() * 3)
       const randomAvatar =
-        cacheFormData.gender === 1
-          ? dosenAvatars.male[randomNumber]
-          : dosenAvatars.female[randomNumber]
+        formData.gender === 1
+          ? professorAvatars.male[randomNumber]
+          : professorAvatars.female[randomNumber]
       await sendData({
         ...cacheFormData,
         ...formData,
         avatar: randomAvatar,
       })
       history.push('/')
-    } catch (error) {
-      if (error.response) {
-        setError(error.response.data.message)
+    } catch (err) {
+      if (err.response) {
+        setError(err.response.data.message)
         return
       }
 
-      setError(error)
+      setAsyncError(err)
     }
   }
 
-  if (loading) {
+  if (!faculties.length && !genders.length) {
     return <Spinner>Memuat data ...</Spinner>
   }
 
   return (
     <Layout>
-      <BackButton to="/signup" />
+      <Seo title="Signup step-2 | UNIQUEUE" />
+      <BackButton />
       <Container>
         <Title>Data diri dosen</Title>
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -151,7 +108,7 @@ function DosenForm({sendData, cacheFormData}) {
             setValue={setValue}
             items={genders}
           />
-          <Button>Daftar</Button>
+          <ButtonBlock disabled={isSubmitting}>Daftar</ButtonBlock>
         </Form>
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </Container>

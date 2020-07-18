@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react'
-import axios from 'axios'
+import React, {useEffect} from 'react'
+import useSWR from 'swr'
 import {Route, Switch} from 'react-router-dom'
 import {useSocket} from '../../../context/SocketContext'
 import Home from './Home'
@@ -7,37 +7,33 @@ import Queue from './Queue'
 import Profile from './Profile'
 import EditProfile from './EditProfile'
 import ChangePassword from './ChangePassword'
+import NotFound from '../../NotFound'
 import Professor from './Professor'
 import Spinner from '../../../components/Spinner'
 import {useAuth} from '../../../context/AuthContext'
+import useAsyncError from '../../../hooks/useAsyncError'
 
 function StudentDashboard({match}) {
   const {user} = useAuth()
   const socket = useSocket()
-  const [professor, setProfessor] = useState(null)
-  const {id, fullname, avatar, study, role, professorID} = user
+  const setAsyncError = useAsyncError()
+  const {id, fullname, avatar, study, role, professor: studentProfessor} = user
+  const {data: professor, mutate, error} = useSWR(
+    `/professors/${studentProfessor.id}`,
+  )
 
   useEffect(() => {
-    socket.on('professorStatus', (data) => {
-      if (professorID === data.id) {
-        setProfessor((prevData) => ({
-          ...prevData,
-          status: data.status,
-        }))
+    if (error) {
+      setAsyncError(error)
+    }
+  }, [error])
+
+  useEffect(() => {
+    socket.on('professorStatus', ({status, id: profID}) => {
+      if (studentProfessor.id === profID) {
+        mutate(async (cachedValue) => ({status, ...cachedValue}))
       }
     })
-  }, [])
-
-  useEffect(() => {
-    const url = `http://localhost:4000/professor/${professorID}`
-    axios
-      .get(url)
-      .then(({data}) => {
-        setProfessor(data)
-      })
-      .catch((error) => {
-        console.log('error from fetch professor: ', error)
-      })
   }, [])
 
   if (!professor) {
@@ -47,45 +43,7 @@ function StudentDashboard({match}) {
   return (
     <Switch>
       <Route
-        path={`${match.path}queue`}
-        render={(routerProps) => (
-          <Queue
-            id={id}
-            professorID={professorID}
-            professorName={professor.fullname}
-            professorAvatar={professor.avatar}
-            professorStatus={professor.status}
-            {...routerProps}
-          />
-        )}
-      />
-      <Route
-        path={`${match.path}professor`}
-        render={(routerProps) => (
-          <Professor professor={professor} {...routerProps} />
-        )}
-      />
-      <Route
-        path={`${match.path}profile/change-password`}
-        render={(routerProps) => (
-          <ChangePassword role={role} id={id} {...routerProps} />
-        )}
-      />
-      <Route
-        path={`${match.path}profile/edit`}
-        render={(routerProps) => <EditProfile user={user} {...routerProps} />}
-      />
-      <Route
-        path={`${match.path}profile`}
-        render={(routerProps) => (
-          <Profile
-            user={user}
-            professorName={professor.fullname}
-            {...routerProps}
-          />
-        )}
-      />
-      <Route
+        exact
         path={match.path}
         render={(routerProps) => (
           <Home
@@ -99,6 +57,51 @@ function StudentDashboard({match}) {
           />
         )}
       />
+      <Route
+        exact
+        path={`${match.path}queue`}
+        render={(routerProps) => (
+          <Queue
+            id={id}
+            fullname={fullname}
+            professorID={professor.id}
+            professorName={professor.fullname}
+            professorAvatar={professor.avatar}
+            professorStatus={professor.status}
+            {...routerProps}
+          />
+        )}
+      />
+      <Route
+        exact
+        path={`${match.path}professor`}
+        render={(routerProps) => (
+          <Professor professor={professor} {...routerProps} />
+        )}
+      />
+      <Route
+        exact
+        path={`${match.path}profile/change-password`}
+        render={(routerProps) => (
+          <ChangePassword
+            fullname={fullname}
+            role={role}
+            id={id}
+            {...routerProps}
+          />
+        )}
+      />
+      <Route
+        exact
+        path={`${match.path}profile/edit`}
+        render={(routerProps) => <EditProfile user={user} {...routerProps} />}
+      />
+      <Route
+        exact
+        path={`${match.path}profile`}
+        render={(routerProps) => <Profile user={user} {...routerProps} />}
+      />
+      <Route component={NotFound} />
     </Switch>
   )
 }

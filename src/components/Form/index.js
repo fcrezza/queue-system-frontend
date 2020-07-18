@@ -14,6 +14,7 @@ const ErrorMessage = styled.p`
 const Title = styled.h1`
   font-size: 2.5rem;
   margin: 0 0 3rem;
+  color: ${({theme}) => theme.primary};
 `
 
 const Container = styled.div`
