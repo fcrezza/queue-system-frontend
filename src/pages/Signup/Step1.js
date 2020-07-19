@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 import {useForm} from 'react-hook-form'
 import {object, string} from 'yup'
 import useError from '../../hooks/useError'
@@ -16,6 +15,7 @@ import {
   Title,
   RadioContainer,
 } from '../../components/Form'
+import axios from '../../libs/axios'
 
 const validationSchema = object().shape({
   role: string().required('Pilih salah satu role'),
@@ -46,8 +46,8 @@ function Step1({cacheFormData, nextStep}) {
       const {username, role} = formData
       const url =
         role === 'student'
-          ? `http://localhost:4000/students/username/${username}`
-          : `http://localhost:4000/professors/username/${username}`
+          ? `/students/username/${username}`
+          : `/professors/username/${username}`
 
       await axios.get(url)
       nextStep(formData, 2)

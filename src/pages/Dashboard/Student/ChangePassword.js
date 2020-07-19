@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 import {object, string} from 'yup'
 import {useForm} from 'react-hook-form'
 import useError from '../../../hooks/useError'
@@ -9,6 +8,7 @@ import Input from '../../../components/Input'
 import Seo from '../../../components/Seo'
 import {BackButton, ButtonBlock} from '../../../components/Button'
 import {Container, Title, Form, ErrorMessage} from '../../../components/Form'
+import axios from '../../../libs/axios'
 
 const validationSchema = object().shape({
   oldPassword: string()
@@ -34,10 +34,7 @@ function ChangePassword({id, fullname, history}) {
 
   const onSubmit = async (formData) => {
     try {
-      await axios.post(
-        `http://localhost:4000/students/${id}/password`,
-        formData,
-      )
+      await axios.post(`/students/${id}/password`, formData)
       history.push('/profile', {status: 1})
     } catch (err) {
       if (err.response) {

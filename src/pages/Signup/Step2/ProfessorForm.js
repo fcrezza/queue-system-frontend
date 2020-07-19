@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react'
-import axios from 'axios'
 import useSWR from 'swr'
 import {useForm} from 'react-hook-form'
 import {object, string, number} from 'yup'
@@ -13,6 +12,7 @@ import Layout from '../../../layout'
 import Spinner from '../../../components/Spinner'
 import {ButtonBlock, BackButton} from '../../../components/Button'
 import {Container, Form, Title, ErrorMessage} from '../../../components/Form'
+import axios from '../../../libs/axios'
 
 const professorAvatars = {
   male: ['professorMale1', 'professorMale2', 'professorMale3'],
@@ -53,9 +53,8 @@ function DosenForm({sendData, cacheFormData}) {
   }, [register])
 
   const onSubmit = async (formData) => {
-    const url = `http://localhost:4000/professors/nip/${formData.nip}`
     try {
-      await axios.get(url)
+      await axios.get(`/professors/nip/${formData.nip}`)
       const randomNumber = Math.floor(Math.random() * 3)
       const randomAvatar =
         formData.gender === 1

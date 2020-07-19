@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react'
 import useSWR, {mutate} from 'swr'
-import axios from 'axios'
 import {object, string, number} from 'yup'
 import {useForm} from 'react-hook-form'
 import Layout from '../../../layout'
@@ -12,6 +11,7 @@ import Spinner from '../../../components/Spinner'
 import Seo from '../../../components/Seo'
 import {BackButton, ButtonBlock} from '../../../components/Button'
 import {Container, Title, Form, ErrorMessage} from '../../../components/Form'
+import axios from '../../../libs/axios'
 
 const validationSchema = object().shape({
   nim: number()
@@ -93,7 +93,7 @@ function EditProfile({user, history}) {
 
   const onSubmit = async (formData) => {
     try {
-      await axios.post(`http://localhost:4000/students/${id}`, formData)
+      await axios.post(`/students/${id}`, formData)
       await mutate('/user')
       history.push('/profile', {status: 1})
     } catch (err) {

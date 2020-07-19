@@ -6,7 +6,6 @@ import Layout from '../../layout'
 import Spinner from '../../components/Spinner'
 import useAsyncError from '../../hooks/useAsyncError'
 import Seo from '../../components/Seo'
-import fetchData from '../../utils/fetchData'
 import PersonProfileCard from '../../components/PersonProfileCard'
 import {BackButton} from '../../components/Button'
 import {Container, Title as OriginalTitle} from '../../components/Form'
@@ -46,8 +45,9 @@ const ListItem = styled.div`
 `
 
 function Step3({cacheFormData, sendData, history}) {
-  const url = `/studyPrograms/${cacheFormData.study}/professors`
-  const {data: professors, error} = useSWR(url, fetchData)
+  const {data: professors, error} = useSWR(
+    `/studyPrograms/${cacheFormData.study}/professors`,
+  )
   const [inputValue, setInputValue] = useState('')
   const setAsyncError = useAsyncError()
 

@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react'
-import axios from 'axios'
 import useSWR from 'swr'
 import {useForm} from 'react-hook-form'
 import {object, string, number} from 'yup'
@@ -12,6 +11,7 @@ import useError from '../../../hooks/useError'
 import {Button, BackButton} from '../../../components/Button'
 import Select from '../../../components/Select'
 import {Container, Form, Title, ErrorMessage} from '../../../components/Form'
+import axios from '../../../libs/axios'
 
 const validationSchema = object().shape({
   nim: number()
@@ -48,8 +48,7 @@ function MahasiswaForm({nextStep, cacheFormData}) {
 
   const onSubmit = async (formData) => {
     try {
-      const url = `http://localhost:4000/students/nim/${formData.nim}`
-      await axios.get(url)
+      await axios.get(`/students/nim/${formData.nim}`)
       nextStep(formData, 3)
     } catch (err) {
       if (err.response) {

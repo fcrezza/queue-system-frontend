@@ -1,10 +1,9 @@
 import React, {createContext, useContext, useEffect, useState} from 'react'
 import useSWR from 'swr'
-import axios from 'axios'
 import Spinner from '../components/Spinner'
 import useAsyncError from '../hooks/useAsyncError'
+import axios from '../libs/axios'
 
-axios.defaults.withCredentials = true
 const AuthContext = createContext()
 
 function AuthProvider({children}) {
@@ -29,22 +28,20 @@ function AuthProvider({children}) {
 
   const login = async (inputData) => {
     setLoadingMessage('Login ...')
-    const url = 'http://localhost:4000/login'
-    await axios.post(url, inputData)
+    await axios.post('/login', inputData)
     await mutate()
   }
 
   const logout = async () => {
     setLoading(true)
     setLoadingMessage('Logout ...')
-    await axios.get('http://localhost:4000/logout')
+    await axios.get('/logout')
     await mutate(null, false)
   }
 
   const signup = async (data) => {
     setLoadingMessage('Signup ...')
-    const url = 'http://localhost:4000/signup'
-    await axios.post(url, data)
+    await axios.post('/signup', data)
     await mutate()
   }
 
