@@ -3,8 +3,10 @@ import {
   ThemeProvider as StyledThemeProvider,
   createGlobalStyle
 } from "styled-components";
-import colorScheme from "./colorScheme";
+import "normalize.css";
 import "typeface-montserrat";
+
+import colorScheme from "./colorScheme";
 
 const GlobalStyle = createGlobalStyle`
 	*,

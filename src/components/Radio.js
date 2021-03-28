@@ -1,14 +1,10 @@
-import React, {forwardRef} from "react";
+import React from "react";
 import styled from "styled-components";
 
 const RadioWrapper = styled.label`
   align-items: center;
   display: flex;
   position: relative;
-
-  &:first-child {
-    margin-right: 3rem;
-  }
 `;
 
 const RadioInput = styled.div`
@@ -51,9 +47,18 @@ const RadioInput = styled.div`
 
 const RadioLabel = styled.div`
   position: relative;
-  margin-left: 1rem;
+  margin-left: 1.5rem;
   font-size: 1.5rem;
   color: ${({theme}) => theme.primaryLight};
+`;
+
+export const RadioGroup = styled.div`
+  display: flex;
+  align-items: center;
+
+  & > ${RadioWrapper}:not(:last-child) {
+    margin-right: 3rem;
+  }
 `;
 
 function Radio(props, ref) {
@@ -77,4 +82,4 @@ function Radio(props, ref) {
   );
 }
 
-export default forwardRef(Radio);
+export default React.forwardRef(Radio);

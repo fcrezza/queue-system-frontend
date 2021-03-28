@@ -1,45 +1,36 @@
 import React from "react";
 import styled from "styled-components";
 import {Link as RouterLink} from "react-router-dom";
+
 import Layout from "../layout";
 import Seo from "../components/Seo";
-import {ButtonBlock} from "../components/Button";
-import Copyright from "../components/Copyright";
-import ilustration from "../images/ilustration.svg";
+import {Button} from "../components/Button";
+import ilustrationSVG from "../images/ilustration.svg";
 
-const IlustrationImg = styled.img.attrs({
-  src: ilustration,
-  alt: ""
-})`
-  width: 90%;
+const Ilustration = styled.img`
+  width: 80%;
   min-width: 250px;
+  height: 300px;
   display: block;
-  margin: 6rem auto 0;
-`;
-
-const Link = styled(RouterLink)`
-  text-decoration: none;
+  margin: 0 auto;
 `;
 
 const Title = styled.h1`
-  font-size: 2.1rem;
-  margin: 2.5rem 0 1.2rem;
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin: 3rem 0 1.5rem;
   color: ${({theme}) => theme.primary};
+  text-transform: capitalize;
 `;
 
 const Subtitle = styled.p`
   color: ${({theme}) => theme.primaryLight};
   font-size: 1.6rem;
   margin: 0;
+  text-transform: capitalize;
 `;
 
-const ButtonOutline = styled(ButtonBlock)`
-  background: none;
-  border: 1px solid ${({theme}) => theme.primary};
-  color: ${({theme}) => theme.primary};
-`;
-
-const ButtonContainer = styled.div`
+const ButtonGroup = styled.div`
   margin-top: 4rem;
 
   a:first-child {
@@ -47,22 +38,25 @@ const ButtonContainer = styled.div`
   }
 `;
 
+const Link = styled(RouterLink)`
+  text-decoration: none;
+`;
+
 function HomePage() {
   return (
     <Layout>
       <Seo />
-      <IlustrationImg />
-      <Title>Bimbingan tidak perlu ribet</Title>
+      <Ilustration src={ilustrationSVG} alt="" />
+      <Title>Bimbingan tidak perlu ribet.</Title>
       <Subtitle>Mulai bimbingan dengan sekali tap, yup semudah itu!</Subtitle>
-      <ButtonContainer>
-        <ButtonOutline as={Link} to="/signup">
-          Daftar
-        </ButtonOutline>
-        <ButtonBlock as={Link} to="/login">
+      <ButtonGroup>
+        <Button as={Link} to="/login" block>
           Masuk
-        </ButtonBlock>
-      </ButtonContainer>
-      <Copyright />
+        </Button>
+        <Button as={Link} to="/signup" variant="outline" block>
+          Daftar
+        </Button>
+      </ButtonGroup>
     </Layout>
   );
 }
