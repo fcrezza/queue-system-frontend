@@ -1,81 +1,81 @@
-import React, {useState, useEffect} from 'react'
-import styled from 'styled-components'
-import {useSocket} from '../../../context/SocketContext'
-import Layout from '../../../layout'
-import Seo from '../../../components/Seo'
-import Devider from '../../../components/Devider'
-import PopupMessage from '../../../components/PopupMessage'
-import Spinner from '../../../components/Spinner'
-import {BackButton, Button} from '../../../components/Button'
-import NoData from '../../../components/NoData'
-import PersonProfileCard from '../../../components/PersonProfileCard'
+import React, {useState, useEffect} from "react";
+import styled from "styled-components";
+import {useSocket} from "../../../context/SocketContext";
+import Layout from "../../../layout";
+import Seo from "../../../components/Seo";
+import Devider from "../../../components/Devider";
+import PopupMessage from "../../../components/PopupMessage";
+import Spinner from "../../../components/Spinner";
+import {BackButton, Button} from "../../../components/Button";
+import NoData from "../../../components/NoData";
+import PersonProfileCard from "../../../components/PersonProfileCard";
 import {
   Title,
   Subtitle,
-  AntrianContainer,
-} from '../../../components/Dashboard/Section'
-import studentAvatars from '../../../images/students'
-import generateQueueStatusMessage from '../../../utils/queueStatusMessage'
-import closeSVG from '../../../images/close.svg'
+  AntrianContainer
+} from "../../../components/Dashboard/Section";
+import studentAvatars from "../../../images/students";
+import generateQueueStatusMessage from "../../../utils/queueStatusMessage";
+import closeSVG from "../../../images/close.svg";
 
 const Header = styled.div`
   margin: 4rem 0;
-`
+`;
 
 const CloseImg = styled.img.attrs({
   src: closeSVG,
-  alt: '',
+  alt: ""
 })`
   width: 15px;
   display: block;
-`
+`;
 
 const CloseBtn = styled.button`
   padding: 5px;
-`
+`;
 
 function Queue(props) {
-  const socket = useSocket()
-  const [queue, setQueue] = useState(undefined)
-  const [rejectQueue, setRejectQueue] = useState(false)
-  const {id, fullname, professorID, professorStatus} = props
-  const activeQueue = queue?.find((q) => q.status === 'active')
-  const pendingQueue = queue?.filter((q) => q.status === 'pending')
+  const socket = useSocket();
+  const [queue, setQueue] = useState(undefined);
+  const [rejectQueue, setRejectQueue] = useState(false);
+  const {id, fullname, professorID, professorStatus} = props;
+  const activeQueue = queue?.find(q => q.status === "active");
+  const pendingQueue = queue?.filter(q => q.status === "pending");
   const statusMessage =
-    queue && generateQueueStatusMessage(id, activeQueue?.id, queue)
+    queue && generateQueueStatusMessage(id, activeQueue?.id, queue);
 
   useEffect(() => {
-    socket.emit('getQueue', professorID)
-    socket.on('newData', (data, profID) => {
-      const isInQueue = data.find((x) => x.id === id)
+    socket.emit("getQueue", professorID);
+    socket.on("newData", (data, profID) => {
+      const isInQueue = data.find(x => x.id === id);
       if (isInQueue && professorID === profID) {
-        setQueue(data)
+        setQueue(data);
       } else {
-        setQueue(null)
+        setQueue(null);
       }
-    })
-  }, [])
+    });
+  }, [id, professorID, socket]);
 
   const enqueue = () => {
     if (professorStatus) {
-      socket.emit('requestQueue', {id, professorID})
-      return
+      socket.emit("requestQueue", {id, professorID});
+      return;
     }
 
-    setRejectQueue(true)
-  }
+    setRejectQueue(true);
+  };
 
   const dequeue = () => {
-    const {time} = queue.find((a) => a.id === id)
-    socket.emit('outFromQueue', {id, time, professorID})
-  }
+    const {time} = queue.find(a => a.id === id);
+    socket.emit("outFromQueue", {id, time, professorID});
+  };
 
   const closePopup = () => {
-    setRejectQueue(false)
-  }
+    setRejectQueue(false);
+  };
 
-  if (typeof queue !== 'object') {
-    return <Spinner>Memuat data ...</Spinner>
+  if (typeof queue !== "object") {
+    return <Spinner>Memuat data ...</Spinner>;
   }
 
   return (
@@ -124,8 +124,8 @@ function Queue(props) {
                     </PersonProfileCard.Button>
                   )}
                 </PersonProfileCard.Container>
-              )
-            },
+              );
+            }
           )
         ) : (
           <NoData message="Kamu belum melakukan bimbingan">
@@ -134,7 +134,7 @@ function Queue(props) {
         )}
       </AntrianContainer>
     </Layout>
-  )
+  );
 }
 
-export default Queue
+export default Queue;

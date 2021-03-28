@@ -1,3 +1,3 @@
-import * as Profile from './Profile'
+import * as Profile from "./Profile";
 
-export default Profile
+export default Profile;

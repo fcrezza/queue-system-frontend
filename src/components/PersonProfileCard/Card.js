@@ -1,5 +1,5 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from "react";
+import styled from "styled-components";
 
 const CardContainer = styled.div`
   display: flex;
@@ -9,19 +9,19 @@ const CardContainer = styled.div`
   padding: 1.5rem;
   border-radius: 10px;
   overflow: hidden;
-`
+`;
 
 const AvatarContainer = styled.div`
   border-radius: 10px;
   width: 60px;
   min-width: 50px;
   overflow: hidden;
-`
+`;
 
 const CardAvatar = styled.img`
   width: 100%;
   display: block;
-`
+`;
 
 const ContentContainer = styled.div`
   margin-left: 1.8rem;
@@ -29,7 +29,7 @@ const ContentContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
-`
+`;
 
 const ContentText = styled.p`
   margin: 0;
@@ -38,7 +38,7 @@ const ContentText = styled.p`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-`
+`;
 
 const ContentHeading = styled.h3`
   font-size: 1.6rem;
@@ -47,7 +47,7 @@ const ContentHeading = styled.h3`
   white-space: nowrap;
   margin: 0 0 0.5rem;
   color: ${({theme}) => theme.primary};
-`
+`;
 
 const CardButton = styled.button`
   background: transparent;
@@ -59,10 +59,10 @@ const CardButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   margin-left: auto;
-`
+`;
 
 function Container({children}) {
-  return <CardContainer>{children}</CardContainer>
+  return <CardContainer>{children}</CardContainer>;
 }
 
 function Avatar({src, alt}) {
@@ -70,7 +70,7 @@ function Avatar({src, alt}) {
     <AvatarContainer>
       <CardAvatar src={src} alt={alt} />
     </AvatarContainer>
-  )
+  );
 }
 
 function Content({fullname, study}) {
@@ -79,7 +79,7 @@ function Content({fullname, study}) {
       <ContentHeading>{fullname}</ContentHeading>
       <ContentText>{study}</ContentText>
     </ContentContainer>
-  )
+  );
 }
 
 function Button({onClick, children, ...props}) {
@@ -87,7 +87,7 @@ function Button({onClick, children, ...props}) {
     <CardButton onClick={onClick} {...props}>
       {children}
     </CardButton>
-  )
+  );
 }
 
-export {Container, Content, Avatar, Button}
+export {Container, Content, Avatar, Button};

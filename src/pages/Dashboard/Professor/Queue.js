@@ -1,56 +1,56 @@
-import React, {useState, useEffect} from 'react'
-import styled from 'styled-components'
-import {Link as RouterLink} from 'react-router-dom'
-import {useSocket} from '../../../context/SocketContext'
-import Layout from '../../../layout'
-import Spinner from '../../../components/Spinner'
-import Seo from '../../../components/Seo'
-import Devider from '../../../components/Devider'
-import {BackButton, Button} from '../../../components/Button'
+import React, {useState, useEffect} from "react";
+import styled from "styled-components";
+import {Link as RouterLink} from "react-router-dom";
+import {useSocket} from "../../../context/SocketContext";
+import Layout from "../../../layout";
+import Spinner from "../../../components/Spinner";
+import Seo from "../../../components/Seo";
+import Devider from "../../../components/Devider";
+import {BackButton, Button} from "../../../components/Button";
 import {
   Title,
   Subtitle,
-  AntrianContainer,
-} from '../../../components/Dashboard/Section'
-import studentAvatars from '../../../images/students'
-import PersonProfileCard from '../../../components/PersonProfileCard'
-import NoData from '../../../components/NoData'
+  AntrianContainer
+} from "../../../components/Dashboard/Section";
+import studentAvatars from "../../../images/students";
+import PersonProfileCard from "../../../components/PersonProfileCard";
+import NoData from "../../../components/NoData";
 
 const Link = styled(RouterLink)`
   text-decoration: none;
   padding: 0.6rem 0.8rem;
-`
+`;
 
 const ControlContainer = styled.div`
   margin: 4rem 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-`
+`;
 
 function Queue({id, fullname}) {
-  const socket = useSocket()
-  const [queue, setQueue] = useState(undefined)
-  const activeQueue = queue?.find((q) => q.status === 'active')
-  const pendingQueue = queue?.filter((q) => q.status === 'pending')
+  const socket = useSocket();
+  const [queue, setQueue] = useState(undefined);
+  const activeQueue = queue?.find(q => q.status === "active");
+  const pendingQueue = queue?.filter(q => q.status === "pending");
 
   useEffect(() => {
-    socket.emit('getQueue', id)
-    socket.on('newData', (data, profID) => {
+    socket.emit("getQueue", id);
+    socket.on("newData", (data, profID) => {
       if (profID === id) {
-        setQueue(data)
+        setQueue(data);
       } else {
-        setQueue(null)
+        setQueue(null);
       }
-    })
-  }, [])
+    });
+  }, [id, socket]);
 
   const nextQueue = () => {
-    socket.emit('nextQueue', activeQueue, pendingQueue[0])
-  }
+    socket.emit("nextQueue", activeQueue, pendingQueue[0]);
+  };
 
-  if (typeof queue !== 'object') {
-    return <Spinner>Memuat data ...</Spinner>
+  if (typeof queue !== "object") {
+    return <Spinner>Memuat data ...</Spinner>;
   }
 
   return (
@@ -109,18 +109,18 @@ function Queue({id, fullname}) {
                     as={Link}
                     to={`/students/${studentID}`}
                   >
-                    Lihat{' '}
+                    Lihat{" "}
                   </PersonProfileCard.Button>
                 </PersonProfileCard.Container>
-              )
-            },
+              );
+            }
           )
         ) : (
           <NoData message="Tidak ada mahasiswa yang mengantri" />
         )}
       </AntrianContainer>
     </Layout>
-  )
+  );
 }
 
-export default Queue
+export default Queue;

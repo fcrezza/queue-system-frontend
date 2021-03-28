@@ -1,14 +1,14 @@
-import React from 'react'
-import Layout from '../../../layout'
-import PopupMessage from '../../../components/PopupMessage'
-import Seo from '../../../components/Seo'
-import ProfileComp from '../../../components/Profile'
-import {generateProfessorData} from '../../../utils/profileData'
-import professorAvatars from '../../../images/professors'
+import React from "react";
+import Layout from "../../../layout";
+import PopupMessage from "../../../components/PopupMessage";
+import Seo from "../../../components/Seo";
+import ProfileComp from "../../../components/Profile";
+import {generateProfessorData} from "../../../utils/profileData";
+import professorAvatars from "../../../images/professors";
 
 function Profile({user}) {
-  const {avatar, fullname, username} = user
-  const profileData = generateProfessorData(user)
+  const {avatar, fullname, username} = user;
+  const profileData = generateProfessorData(user);
 
   return (
     <Layout>
@@ -24,7 +24,7 @@ function Profile({user}) {
       <ProfileComp.Body items={profileData} />
       <ProfileComp.ChangePassword />
     </Layout>
-  )
+  );
 }
 
-export default Profile
+export default Profile;

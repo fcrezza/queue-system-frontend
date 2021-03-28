@@ -1,3 +1,3 @@
-import * as ProfileCard from './Card'
+import * as ProfileCard from "./Card";
 
-export default ProfileCard
+export default ProfileCard;

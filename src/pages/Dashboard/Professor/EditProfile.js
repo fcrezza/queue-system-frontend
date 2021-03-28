@@ -1,73 +1,73 @@
-import React, {useEffect} from 'react'
-import {object, number, string} from 'yup'
-import useSWR, {mutate} from 'swr'
-import {useForm} from 'react-hook-form'
-import Layout from '../../../layout'
-import useError from '../../../hooks/useError'
-import useAsyncError from '../../../hooks/useAsyncError'
-import Input from '../../../components/Input'
-import Seo from '../../../components/Seo'
-import Select from '../../../components/Select'
-import Spinner from '../../../components/Spinner'
-import {BackButton, ButtonBlock} from '../../../components/Button'
-import {Container, Title, Form, ErrorMessage} from '../../../components/Form'
-import axios from '../../../libs/axios'
+import React, {useEffect} from "react";
+import {object, number, string} from "yup";
+import useSWR, {mutate} from "swr";
+import {useForm} from "react-hook-form";
+import Layout from "../../../layout";
+import useError from "../../../hooks/useError";
+import useAsyncError from "../../../hooks/useAsyncError";
+import Input from "../../../components/Input";
+import Seo from "../../../components/Seo";
+import Select from "../../../components/Select";
+import Spinner from "../../../components/Spinner";
+import {BackButton, ButtonBlock} from "../../../components/Button";
+import {Container, Title, Form, ErrorMessage} from "../../../components/Form";
+import axios from "../../../libs/axios";
 
 const validationSchema = object().shape({
   nip: number()
-    .transform((value) => (value ? parseInt(value, 10) : undefined))
-    .required('NIP harus di isi'),
-  username: string().required('Username harus di isi'),
-  fullname: string().required('Nama lengkap harus di isi'),
-  address: string().required('Alamat harus diisi'),
-  faculty: number().required('Fakultas harus di isi'),
-  gender: number().required('Jenis kelamin harus diisi'),
-})
+    .transform(value => (value ? parseInt(value, 10) : undefined))
+    .required("NIP harus di isi"),
+  username: string().required("Username harus di isi"),
+  fullname: string().required("Nama lengkap harus di isi"),
+  address: string().required("Alamat harus diisi"),
+  faculty: number().required("Fakultas harus di isi"),
+  gender: number().required("Jenis kelamin harus diisi")
+});
 
 function EditProfile({user, history}) {
   const {register, handleSubmit, setValue, formState, errors} = useForm({
-    reValidateMode: 'onSubmit',
-    validationSchema,
-  })
-  const {data: faculties, error: errorFaculties} = useSWR('/faculties')
-  const {data: genders, error: errorGenders} = useSWR('/genders')
-  const {errorMessage, setError} = useError(errors)
-  const {id, gender, username, nip, address, fullname, faculty} = user
-  const {isSubmitting} = formState
-  const setAsyncError = useAsyncError()
+    reValidateMode: "onSubmit",
+    validationSchema
+  });
+  const {data: faculties, error: errorFaculties} = useSWR("/faculties");
+  const {data: genders, error: errorGenders} = useSWR("/genders");
+  const {errorMessage, setError} = useError(errors);
+  const {id, gender, username, nip, address, fullname, faculty} = user;
+  const {isSubmitting} = formState;
+  const setAsyncError = useAsyncError();
 
   useEffect(() => {
-    register('gender')
-    register('faculty')
-  }, [register])
+    register("gender");
+    register("faculty");
+  }, [register]);
 
   useEffect(() => {
-    setValue('gender', gender.id)
-    setValue('faculty', faculty.id)
-  }, [])
+    setValue("gender", gender.id);
+    setValue("faculty", faculty.id);
+  }, [faculty.id, gender.id, setValue]);
 
   useEffect(() => {
     if (errorGenders || errorFaculties) {
-      setAsyncError(errorGenders || errorFaculties)
+      setAsyncError(errorGenders || errorFaculties);
     }
-  }, [errorGenders, errorFaculties])
+  }, [errorGenders, errorFaculties, setAsyncError]);
 
-  const onSubmit = async (formData) => {
+  const onSubmit = async formData => {
     try {
-      await axios.post(`/professors/${id}`, formData)
-      await mutate('/user')
-      history.push('/profile', {status: 1})
+      await axios.post(`/professors/${id}`, formData);
+      await mutate("/user");
+      history.push("/profile", {status: 1});
     } catch (error) {
       if (error.response) {
-        setError(error.response.data.message)
+        setError(error.response.data.message);
       }
 
-      setAsyncError(error)
+      setAsyncError(error);
     }
-  }
+  };
 
   if (!faculties || !genders) {
-    return <Spinner>Memuat data ...</Spinner>
+    return <Spinner>Memuat data ...</Spinner>;
   }
 
   return (
@@ -120,7 +120,7 @@ function EditProfile({user, history}) {
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </Container>
     </Layout>
-  )
+  );
 }
 
-export default EditProfile
+export default EditProfile;

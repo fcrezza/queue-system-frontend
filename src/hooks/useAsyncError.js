@@ -1,16 +1,16 @@
-import {useState} from 'react'
+import {useState} from "react";
 
 function useAsyncError() {
   // eslint-disable-next-line
-  const [_, setError] = useState()
+  const [_, setError] = useState();
 
-  const handleError = (err) => {
+  const handleError = err => {
     setError(() => {
-      throw err
-    })
-  }
+      throw err;
+    });
+  };
 
-  return handleError
+  return handleError;
 }
 
-export default useAsyncError
+export default useAsyncError;

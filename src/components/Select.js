@@ -1,11 +1,11 @@
-import React from 'react'
-import styled from 'styled-components'
-import {useSelect} from 'downshift'
+import React from "react";
+import styled from "styled-components";
+import {useSelect} from "downshift";
 
 const SelectContainer = styled.div`
   background: ${({theme}) => theme.gray};
   border-bottom: ${({theme}) => `2px solid ${theme.primaryLight}`};
-`
+`;
 
 const Label = styled.label`
   width: 100%;
@@ -13,7 +13,7 @@ const Label = styled.label`
   font-size: 1.3rem;
   color: ${({theme}) => theme.primaryLight};
   display: block;
-`
+`;
 
 const SelectButton = styled.button`
   padding-left: 1rem;
@@ -25,11 +25,11 @@ const SelectButton = styled.button`
   display: flex;
   justify-content: space-between;
   outline: none;
-`
+`;
 
 const Menu = styled.div`
   position: relative;
-`
+`;
 
 const ItemsContainer = styled.div`
   background: ${({theme}) => theme.secondaryLight};
@@ -39,7 +39,7 @@ const ItemsContainer = styled.div`
   overflow-y: auto;
   top: 100%;
   box-shadow: ${({theme}) => `0px 0px 20px ${theme.solidGray}`};
-`
+`;
 
 const Item = styled.div`
   padding: 1.5rem 1rem;
@@ -49,7 +49,7 @@ const Item = styled.div`
   &:not(:last-child) {
     border-bottom: ${({theme}) => `.1px solid ${theme.solidGray}`};
   }
-`
+`;
 
 const ButtonText = styled.div`
   font-size: 1.8rem;
@@ -57,7 +57,7 @@ const ButtonText = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
   text-overflow: hidden;
-`
+`;
 
 function Select({items, name, defaultValue, placeholder, setValue}) {
   const {
@@ -67,20 +67,20 @@ function Select({items, name, defaultValue, placeholder, setValue}) {
     getLabelProps,
     getMenuProps,
     highlightedIndex,
-    getItemProps,
+    getItemProps
   } = useSelect({
     items,
-    defaultSelectedItem: items.find((item) => item.id === defaultValue),
-    itemToString: (item) => (item ? item.nama : ''),
-    onSelectedItemChange: (change) => {
-      setValue(name, change.selectedItem.id)
-    },
-  })
+    defaultSelectedItem: items.find(item => item.id === defaultValue),
+    itemToString: item => (item ? item.nama : ""),
+    onSelectedItemChange: change => {
+      setValue(name, change.selectedItem.id);
+    }
+  });
   return (
     <SelectContainer>
       <Label {...getLabelProps()}>{placeholder}</Label>
       <SelectButton {...getToggleButtonProps()} type="button">
-        <ButtonText>{selectedItem ? selectedItem.nama : ''}</ButtonText>
+        <ButtonText>{selectedItem ? selectedItem.nama : ""}</ButtonText>
         <ButtonText>▾</ButtonText>
       </SelectButton>
       <Menu {...getMenuProps()}>
@@ -89,7 +89,7 @@ function Select({items, name, defaultValue, placeholder, setValue}) {
             items.map((item, index) => (
               <Item
                 isSelected={highlightedIndex === index}
-                key={[item.nama, index].join('-')}
+                key={[item.nama, index].join("-")}
                 {...getItemProps({item, index})}
               >
                 {item.nama}
@@ -98,11 +98,11 @@ function Select({items, name, defaultValue, placeholder, setValue}) {
         </ItemsContainer>
       </Menu>
     </SelectContainer>
-  )
+  );
 }
 
 export function ControlledSelect(props) {
-  const {selectedItemID, items, name, placeholder, setValue} = props
+  const {selectedItemID, items, name, placeholder, setValue} = props;
   const {
     isOpen,
     selectedItem,
@@ -110,21 +110,21 @@ export function ControlledSelect(props) {
     getLabelProps,
     getMenuProps,
     highlightedIndex,
-    getItemProps,
+    getItemProps
   } = useSelect({
     items,
-    selectedItem: items.find((item) => item.id === selectedItemID) || -1,
-    itemToString: (item) => (item ? item.nama : ''),
-    onSelectedItemChange: (change) => {
-      setValue(name, change.selectedItem.id)
-    },
-  })
+    selectedItem: items.find(item => item.id === selectedItemID) || -1,
+    itemToString: item => (item ? item.nama : ""),
+    onSelectedItemChange: change => {
+      setValue(name, change.selectedItem.id);
+    }
+  });
 
   return (
     <SelectContainer>
       <Label {...getLabelProps()}>{placeholder}</Label>
       <SelectButton {...getToggleButtonProps()} type="button">
-        <ButtonText>{selectedItem ? selectedItem.nama : ''}</ButtonText>
+        <ButtonText>{selectedItem ? selectedItem.nama : ""}</ButtonText>
         <ButtonText>▾</ButtonText>
       </SelectButton>
       <Menu {...getMenuProps()}>
@@ -133,7 +133,7 @@ export function ControlledSelect(props) {
             items.map((item, index) => (
               <Item
                 isSelected={highlightedIndex === index}
-                key={[item.nama, index].join('-')}
+                key={[item.nama, index].join("-")}
                 {...getItemProps({item, index})}
               >
                 {item.nama}
@@ -142,7 +142,7 @@ export function ControlledSelect(props) {
         </ItemsContainer>
       </Menu>
     </SelectContainer>
-  )
+  );
 }
 
-export default Select
+export default Select;

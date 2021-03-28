@@ -1,6 +1,6 @@
-import React from 'react'
-import styled from 'styled-components'
-import {Link} from 'react-router-dom'
+import React from "react";
+import styled from "styled-components";
+import {Link} from "react-router-dom";
 
 const PreferenceContainer = styled.div`
   border-radius: 10px;
@@ -8,7 +8,7 @@ const PreferenceContainer = styled.div`
   height: 45px;
   overflow: hidden;
   position: relative;
-`
+`;
 
 const PreferenceImage = styled.img`
   display: block;
@@ -17,7 +17,7 @@ const PreferenceImage = styled.img`
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-`
+`;
 
 function Preference({avatar}) {
   return (
@@ -26,7 +26,7 @@ function Preference({avatar}) {
         <PreferenceImage src={avatar} alt="preference" />
       </PreferenceContainer>
     </Link>
-  )
+  );
 }
 
-export default Preference
+export default Preference;

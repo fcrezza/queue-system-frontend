@@ -1,29 +1,29 @@
-import React, {useState} from 'react'
-import useSWR from 'swr'
-import styled from 'styled-components'
-import {Link as RouterLink} from 'react-router-dom'
-import Spinner from '../../../components/Spinner'
-import Layout from '../../../layout'
-import {BackButton} from '../../../components/Button'
-import {Title, Subtitle} from '../../../components/Dashboard/Section'
-import PersonProfileCard from '../../../components/PersonProfileCard'
-import studentAvatars from '../../../images/students'
-import Seo from '../../../components/Seo'
+import React, {useState} from "react";
+import useSWR from "swr";
+import styled from "styled-components";
+import {Link as RouterLink} from "react-router-dom";
+import Spinner from "../../../components/Spinner";
+import Layout from "../../../layout";
+import {BackButton} from "../../../components/Button";
+import {Title, Subtitle} from "../../../components/Dashboard/Section";
+import PersonProfileCard from "../../../components/PersonProfileCard";
+import studentAvatars from "../../../images/students";
+import Seo from "../../../components/Seo";
 
 const Container = styled.div`
   margin-bottom: 4rem;
-`
+`;
 
 const ListContainer = styled.div`
   & > div {
     margin-bottom: 2.5rem;
   }
-`
+`;
 
 const Link = styled(RouterLink)`
   text-decoration: none;
   padding: 0.6rem 0.8rem;
-`
+`;
 
 const SearchInput = styled.input`
   background: ${({theme}) => theme.gray};
@@ -33,21 +33,21 @@ const SearchInput = styled.input`
   width: 100%;
   font-size: 1.4rem;
   padding: 1.5rem;
-`
+`;
 
 function MahasiswaList({id, fullname}) {
-  const {data: list} = useSWR(`/professors/${id}/students`)
-  const [inputValue, setInputValue] = useState('')
+  const {data: list} = useSWR(`/professors/${id}/students`);
+  const [inputValue, setInputValue] = useState("");
 
   if (!list) {
-    return <Spinner>Memuat data ... </Spinner>
+    return <Spinner>Memuat data ... </Spinner>;
   }
 
-  const filteredList = list.filter((l) => {
-    const input = inputValue.toLowerCase()
-    const name = l.fullname.toLowerCase()
-    return name.includes(input)
-  })
+  const filteredList = list.filter(l => {
+    const input = inputValue.toLowerCase();
+    const name = l.fullname.toLowerCase();
+    return name.includes(input);
+  });
 
   return (
     <Layout>
@@ -67,8 +67,8 @@ function MahasiswaList({id, fullname}) {
         />
       </Container>
       <ListContainer>
-        {filteredList.map((l) => {
-          const {id: studentID, study, avatar, fullname: studentName} = l
+        {filteredList.map(l => {
+          const {id: studentID, study, avatar, fullname: studentName} = l;
 
           return (
             <PersonProfileCard.Container key={studentID}>
@@ -81,11 +81,11 @@ function MahasiswaList({id, fullname}) {
                 Lihat
               </PersonProfileCard.Button>
             </PersonProfileCard.Container>
-          )
+          );
         })}
       </ListContainer>
     </Layout>
-  )
+  );
 }
 
-export default MahasiswaList
+export default MahasiswaList;

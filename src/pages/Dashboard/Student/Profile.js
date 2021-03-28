@@ -1,15 +1,15 @@
-import React from 'react'
-import Layout from '../../../layout'
-import PopupMessage from '../../../components/PopupMessage'
-import Seo from '../../../components/Seo'
-import ProfileComp from '../../../components/Profile'
-import {generateStudentData} from '../../../utils/profileData'
-import studentAvatars from '../../../images/students'
+import React from "react";
+import Layout from "../../../layout";
+import PopupMessage from "../../../components/PopupMessage";
+import Seo from "../../../components/Seo";
+import ProfileComp from "../../../components/Profile";
+import {generateStudentData} from "../../../utils/profileData";
+import studentAvatars from "../../../images/students";
 
 function Profile({user}) {
-  const {username, avatar, fullname} = user
+  const {username, avatar, fullname} = user;
 
-  const profileData = generateStudentData(user)
+  const profileData = generateStudentData(user);
   return (
     <Layout>
       <Seo title={`Profil | ${fullname}`} />
@@ -24,7 +24,7 @@ function Profile({user}) {
       <ProfileComp.Body items={profileData} />
       <ProfileComp.ChangePassword />
     </Layout>
-  )
+  );
 }
 
-export default Profile
+export default Profile;

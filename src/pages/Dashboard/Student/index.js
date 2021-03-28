@@ -1,43 +1,43 @@
-import React, {useEffect} from 'react'
-import useSWR from 'swr'
-import {Route, Switch} from 'react-router-dom'
-import {useSocket} from '../../../context/SocketContext'
-import Home from './Home'
-import Queue from './Queue'
-import Profile from './Profile'
-import EditProfile from './EditProfile'
-import ChangePassword from './ChangePassword'
-import NotFound from '../../NotFound'
-import Professor from './Professor'
-import Spinner from '../../../components/Spinner'
-import {useAuth} from '../../../context/AuthContext'
-import useAsyncError from '../../../hooks/useAsyncError'
+import React, {useEffect} from "react";
+import useSWR from "swr";
+import {Route, Switch} from "react-router-dom";
+import {useSocket} from "../../../context/SocketContext";
+import Home from "./Home";
+import Queue from "./Queue";
+import Profile from "./Profile";
+import EditProfile from "./EditProfile";
+import ChangePassword from "./ChangePassword";
+import NotFound from "../../NotFound";
+import Professor from "./Professor";
+import Spinner from "../../../components/Spinner";
+import {useAuth} from "../../../context/AuthContext";
+import useAsyncError from "../../../hooks/useAsyncError";
 
 function StudentDashboard({match}) {
-  const {user} = useAuth()
-  const socket = useSocket()
-  const setAsyncError = useAsyncError()
-  const {id, fullname, avatar, study, role, professor: studentProfessor} = user
+  const {user} = useAuth();
+  const socket = useSocket();
+  const setAsyncError = useAsyncError();
+  const {id, fullname, avatar, study, role, professor: studentProfessor} = user;
   const {data: professor, mutate, error} = useSWR(
-    `/professors/${studentProfessor.id}`,
-  )
+    `/professors/${studentProfessor.id}`
+  );
 
   useEffect(() => {
     if (error) {
-      setAsyncError(error)
+      setAsyncError(error);
     }
-  }, [error])
+  }, [error, setAsyncError]);
 
   useEffect(() => {
-    socket.on('professorStatus', ({status, id: profID}) => {
+    socket.on("professorStatus", ({status, id: profID}) => {
       if (studentProfessor.id === profID) {
-        mutate(async (cachedValue) => ({status, ...cachedValue}))
+        mutate(async cachedValue => ({status, ...cachedValue}));
       }
-    })
-  }, [])
+    });
+  }, [mutate, socket, studentProfessor.id]);
 
   if (!professor) {
-    return <Spinner>Memuat data ...</Spinner>
+    return <Spinner>Memuat data ...</Spinner>;
   }
 
   return (
@@ -45,7 +45,7 @@ function StudentDashboard({match}) {
       <Route
         exact
         path={match.path}
-        render={(routerProps) => (
+        render={routerProps => (
           <Home
             professorName={professor.fullname}
             professorAvatar={professor.avatar}
@@ -60,7 +60,7 @@ function StudentDashboard({match}) {
       <Route
         exact
         path={`${match.path}queue`}
-        render={(routerProps) => (
+        render={routerProps => (
           <Queue
             id={id}
             fullname={fullname}
@@ -75,14 +75,14 @@ function StudentDashboard({match}) {
       <Route
         exact
         path={`${match.path}professor`}
-        render={(routerProps) => (
+        render={routerProps => (
           <Professor professor={professor} {...routerProps} />
         )}
       />
       <Route
         exact
         path={`${match.path}profile/change-password`}
-        render={(routerProps) => (
+        render={routerProps => (
           <ChangePassword
             fullname={fullname}
             role={role}
@@ -94,16 +94,16 @@ function StudentDashboard({match}) {
       <Route
         exact
         path={`${match.path}profile/edit`}
-        render={(routerProps) => <EditProfile user={user} {...routerProps} />}
+        render={routerProps => <EditProfile user={user} {...routerProps} />}
       />
       <Route
         exact
         path={`${match.path}profile`}
-        render={(routerProps) => <Profile user={user} {...routerProps} />}
+        render={routerProps => <Profile user={user} {...routerProps} />}
       />
       <Route component={NotFound} />
     </Switch>
-  )
+  );
 }
 
-export default StudentDashboard
+export default StudentDashboard;

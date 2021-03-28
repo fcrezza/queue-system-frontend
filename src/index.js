@@ -1,11 +1,13 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import App from './App'
-import SWRConfig from './context/SWR'
-import {AuthProvider} from './context/AuthContext'
-import {GlobalStyle, ThemeProvider} from './theme/index'
-import ErrorBoundary from './components/ErrorBoundary'
-import * as serviceWorker from './serviceWorker'
+import React from "react";
+import ReactDOM from "react-dom";
+import "normalize.css";
+
+import App from "./App";
+import SWRConfig from "./context/SWR";
+import {AuthProvider} from "./context/AuthContext";
+import {GlobalStyle, ThemeProvider} from "./utils/theme";
+import ErrorBoundary from "./components/ErrorBoundary";
+import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -20,7 +22,7 @@ ReactDOM.render(
       </ErrorBoundary>
     </ThemeProvider>
   </React.StrictMode>,
-  document.getElementById('root'),
-)
+  document.getElementById("root")
+);
 
-serviceWorker.unregister()
+serviceWorker.unregister();

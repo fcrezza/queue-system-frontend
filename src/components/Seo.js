@@ -1,11 +1,11 @@
-import React from 'react'
-import {Helmet} from 'react-helmet'
+import React from "react";
+import {Helmet} from "react-helmet";
 
 function Seo({title: titleProp}) {
-  const defaultTitle = 'UNIQUEUE | Aplikasi antrian bimbingan dosen'
-  const description = 'Mulai bimbingan dengan sekali tap, yup semudah itu!'
-  const title = titleProp || defaultTitle
-  const url = window.location.href
+  const defaultTitle = "UNIQUEUE | Aplikasi antrian bimbingan dosen";
+  const description = "Mulai bimbingan dengan sekali tap, yup semudah itu!";
+  const title = titleProp || defaultTitle;
+  const url = window.location.href;
 
   return (
     <Helmet>
@@ -24,7 +24,7 @@ function Seo({title: titleProp}) {
       <meta property="twitter:title" content={title} />
       <meta property="twitter:description" content={description} />
     </Helmet>
-  )
+  );
 }
 
-export default Seo
+export default Seo;

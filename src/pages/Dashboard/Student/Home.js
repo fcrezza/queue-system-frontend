@@ -1,22 +1,22 @@
-import React, {useContext} from 'react'
-import styled, {ThemeContext} from 'styled-components'
-import Layout from '../../../layout'
-import Seo from '../../../components/Seo'
-import studentAvatars from '../../../images/students'
-import professorPNG from '../../../images/professor.png'
-import queuePNG from '../../../images/queue.png'
-import chatPNG from '../../../images/chat.png'
-import {Header, Menu} from '../../../components/Dashboard'
-import Copyright from '../../../components/Copyright'
+import React, {useContext} from "react";
+import styled, {ThemeContext} from "styled-components";
+import Layout from "../../../layout";
+import Seo from "../../../components/Seo";
+import studentAvatars from "../../../images/students";
+import professorPNG from "../../../images/professor.png";
+import queuePNG from "../../../images/queue.png";
+import chatPNG from "../../../images/chat.png";
+import {Header, Menu} from "../../../components/Dashboard";
+import Copyright from "../../../components/Copyright";
 
 const ComingSoon = styled.p`
   color: ${({theme}) => theme.primaryLight};
   font-size: 1.2rem;
   margin: 0.5rem 0;
-`
+`;
 
 function Home({fullname, study, avatar}) {
-  const {skyBlue, pink, orange} = useContext(ThemeContext)
+  const {skyBlue, pink, orange} = useContext(ThemeContext);
 
   return (
     <Layout>
@@ -45,7 +45,7 @@ function Home({fullname, study, avatar}) {
       </Menu.Container>
       <Copyright />
     </Layout>
-  )
+  );
 }
 
-export default Home
+export default Home;

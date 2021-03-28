@@ -1,30 +1,30 @@
-import React, {useState, useEffect} from 'react'
-import styled from 'styled-components'
-import useSWR from 'swr'
-import {Redirect} from 'react-router-dom'
-import Layout from '../../layout'
-import Spinner from '../../components/Spinner'
-import useAsyncError from '../../hooks/useAsyncError'
-import Seo from '../../components/Seo'
-import PersonProfileCard from '../../components/PersonProfileCard'
-import {BackButton} from '../../components/Button'
-import {Container, Title as OriginalTitle} from '../../components/Form'
-import ProfessorAvatars from '../../images/professors'
+import React, {useState, useEffect} from "react";
+import styled from "styled-components";
+import useSWR from "swr";
+import {Redirect} from "react-router-dom";
+import Layout from "../../layout";
+import Spinner from "../../components/Spinner";
+import useAsyncError from "../../hooks/useAsyncError";
+import Seo from "../../components/Seo";
+import PersonProfileCard from "../../components/PersonProfileCard";
+import {BackButton} from "../../components/Button";
+import {Container, Title as OriginalTitle} from "../../components/Form";
+import ProfessorAvatars from "../../images/professors";
 
 const studentAvatars = {
-  male: ['studentMale1', 'studentMale2', 'studentMale3'],
-  female: ['studentFemale1', 'studentFemale2', 'studentFemale3'],
-}
+  male: ["studentMale1", "studentMale2", "studentMale3"],
+  female: ["studentFemale1", "studentFemale2", "studentFemale3"]
+};
 
 const Title = styled(OriginalTitle)`
   margin: 3rem 0 1rem;
-`
+`;
 
 const Subtitle = styled.p`
   color: ${({theme}) => theme.primaryLight};
   margin: 0 0 3rem;
   font-size: 1.6rem;
-`
+`;
 
 const SearchInput = styled.input`
   background: ${({theme}) => theme.gray};
@@ -34,7 +34,7 @@ const SearchInput = styled.input`
   width: 100%;
   padding: 1.3rem;
   outline: none;
-`
+`;
 
 const ListItem = styled.div`
   margin: 5rem 0;
@@ -42,55 +42,55 @@ const ListItem = styled.div`
   & > div {
     margin-bottom: 3.5rem;
   }
-`
+`;
 
 function Step3({cacheFormData, sendData, history}) {
   const {data: professors, error} = useSWR(
-    `/studyPrograms/${cacheFormData.study}/professors`,
-  )
-  const [inputValue, setInputValue] = useState('')
-  const setAsyncError = useAsyncError()
+    `/studyPrograms/${cacheFormData.study}/professors`
+  );
+  const [inputValue, setInputValue] = useState("");
+  const setAsyncError = useAsyncError();
 
   useEffect(() => {
     if (error) {
-      setAsyncError(error)
+      setAsyncError(error);
     }
-  }, [error])
+  }, [error, setAsyncError]);
 
-  if (!professors && cacheFormData.role === 'student') {
-    return <Spinner>Memuat data ...</Spinner>
+  if (!professors && cacheFormData.role === "student") {
+    return <Spinner>Memuat data ...</Spinner>;
   }
 
-  const handleClick = async (id) => {
+  const handleClick = async id => {
     try {
-      const randomNumber = Math.floor(Math.random() * 3)
+      const randomNumber = Math.floor(Math.random() * 3);
       const randomAvatar =
         cacheFormData.gender === 1
           ? studentAvatars.male[randomNumber]
-          : studentAvatars.female[randomNumber]
+          : studentAvatars.female[randomNumber];
 
       await sendData({
         ...cacheFormData,
         idDosen: id,
-        avatar: randomAvatar,
-      })
-      history.push('/')
+        avatar: randomAvatar
+      });
+      history.push("/");
     } catch (err) {
-      setAsyncError(err)
+      setAsyncError(err);
     }
-  }
+  };
 
   const handleChange = ({target}) => {
-    setInputValue(target.value)
-  }
+    setInputValue(target.value);
+  };
 
   const filteredProfessors = professors.filter(({fullname}) => {
-    const inputLowercase = inputValue.toLowerCase()
-    const nameLowercase = fullname.toLowerCase()
-    return nameLowercase.includes(inputLowercase)
-  })
+    const inputLowercase = inputValue.toLowerCase();
+    const nameLowercase = fullname.toLowerCase();
+    return nameLowercase.includes(inputLowercase);
+  });
 
-  if (professors && cacheFormData.role === 'student') {
+  if (professors && cacheFormData.role === "student") {
     return (
       <Layout>
         <Seo title="Signup step-3 | UNIQUEUE" />
@@ -124,10 +124,10 @@ function Step3({cacheFormData, sendData, history}) {
           </ListItem>
         </Container>
       </Layout>
-    )
+    );
   }
 
-  return <Redirect to="/signup" />
+  return <Redirect to="/signup" />;
 }
 
-export default Step3
+export default Step3;

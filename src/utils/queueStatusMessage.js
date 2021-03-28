@@ -1,16 +1,16 @@
 function generateStatusMessage(id, activeQueueID, queue) {
-  const indexInQueue = queue.indexOf(queue.find((q) => q.id === id))
-  let message = ''
+  const indexInQueue = queue.indexOf(queue.find(q => q.id === id));
+  let message = "";
 
   if (activeQueueID === id) {
-    message = 'Sedang bimbingan'
+    message = "Sedang bimbingan";
   } else if (activeQueueID !== id && indexInQueue !== 0) {
-    message = `Menunggu ${indexInQueue} antrian`
+    message = `Menunggu ${indexInQueue} antrian`;
   } else {
-    message = 'Menunggu dipanggil'
+    message = "Menunggu dipanggil";
   }
 
-  return message
+  return message;
 }
 
-export default generateStatusMessage
+export default generateStatusMessage;

@@ -1,5 +1,5 @@
-import React from 'react'
-import styled, {keyframes} from 'styled-components'
+import React from "react";
+import styled, {keyframes} from "styled-components";
 
 const SpinnerContainer = styled.div`
   position: absolute;
@@ -9,12 +9,12 @@ const SpinnerContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
+`;
 
 const loadingKeyframe = keyframes`
   0% { transform: translate(-50%,-50%) rotate(0deg); }
   100% { transform: translate(-50%,-50%) rotate(360deg); }
-`
+`;
 
 const LoadingContainer = styled.div`
   width: 70px;
@@ -22,7 +22,7 @@ const LoadingContainer = styled.div`
   display: inline-block;
   overflow: hidden;
   background: none;
-`
+`;
 
 const LoadingWrapper = styled.div`
   width: 100%;
@@ -31,7 +31,7 @@ const LoadingWrapper = styled.div`
   transform: translateZ(0) scale(1);
   backface-visibility: hidden;
   transform-origin: 0 0;
-`
+`;
 
 const InnerLoading = styled.div`
   position: absolute;
@@ -44,14 +44,14 @@ const InnerLoading = styled.div`
   top: 50%;
   left: 50%;
   box-sizing: content-box;
-`
+`;
 
 const SpinnerText = styled.p`
   margin: 1rem 0 0;
   font-size: 1.6rem;
   color: ${({theme}) => theme.primaryLight};
   text-align: center;
-`
+`;
 
 function Spinner({children}) {
   return (
@@ -63,7 +63,7 @@ function Spinner({children}) {
       </LoadingContainer>
       <SpinnerText>{children}</SpinnerText>
     </SpinnerContainer>
-  )
+  );
 }
 
-export default Spinner
+export default Spinner;

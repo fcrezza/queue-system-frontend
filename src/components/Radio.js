@@ -1,5 +1,5 @@
-import React, {forwardRef} from 'react'
-import styled from 'styled-components'
+import React, {forwardRef} from "react";
+import styled from "styled-components";
 
 const RadioWrapper = styled.label`
   align-items: center;
@@ -9,14 +9,14 @@ const RadioWrapper = styled.label`
   &:first-child {
     margin-right: 3rem;
   }
-`
+`;
 
 const RadioInput = styled.div`
   position: relative;
   display: flex;
   align-items: center;
 
-  input[type='radio'] {
+  input[type="radio"] {
     visibility: hidden;
   }
 
@@ -31,7 +31,7 @@ const RadioInput = styled.div`
 
   .check::before {
     display: block;
-    content: '';
+    content: "";
     border-radius: 100%;
     height: 8px;
     width: 8px;
@@ -40,24 +40,24 @@ const RadioInput = styled.div`
     left: 5px;
   }
 
-  input[type='radio']:checked ~ .check::before {
+  input[type="radio"]:checked ~ .check::before {
     background: ${({theme}) => theme.primary};
   }
 
-  input[type='radio']:checked ~ .check {
+  input[type="radio"]:checked ~ .check {
     border-color: ${({theme}) => theme.primary};
   }
-`
+`;
 
 const RadioLabel = styled.div`
   position: relative;
   margin-left: 1rem;
   font-size: 1.5rem;
   color: ${({theme}) => theme.primaryLight};
-`
+`;
 
 function Radio(props, ref) {
-  const {id, label, value, ...rest} = props
+  const {id, label, value, ...rest} = props;
 
   return (
     <RadioWrapper htmlFor={id}>
@@ -74,7 +74,7 @@ function Radio(props, ref) {
       </RadioInput>
       <RadioLabel>{label}</RadioLabel>
     </RadioWrapper>
-  )
+  );
 }
 
-export default forwardRef(Radio)
+export default forwardRef(Radio);

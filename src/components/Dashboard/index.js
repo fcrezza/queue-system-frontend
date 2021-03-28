@@ -1,4 +1,4 @@
-import Header from './Header'
-import * as Menu from './Menu'
+import Header from "./Header";
+import * as Menu from "./Menu";
 
-export {Menu, Header}
+export {Menu, Header};

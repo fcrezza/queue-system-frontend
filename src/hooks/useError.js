@@ -1,17 +1,17 @@
-import {useState, useEffect} from 'react'
+import {useState, useEffect} from "react";
 
 function useError(errors = {}) {
-  const [errorMessage, setError] = useState(null)
+  const [errorMessage, setError] = useState(null);
 
   useEffect(() => {
-    const errorKeys = Object.keys(errors)
+    const errorKeys = Object.keys(errors);
     if (errorKeys.length) {
-      const {message} = errors[errorKeys[0]]
-      setError(message)
+      const {message} = errors[errorKeys[0]];
+      setError(message);
     }
-  }, [errors])
+  }, [errors]);
 
-  return {errorMessage, setError}
+  return {errorMessage, setError};
 }
 
-export default useError
+export default useError;

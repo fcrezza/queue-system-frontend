@@ -1,9 +1,9 @@
-import React from 'react'
-import {SWRConfig} from 'swr'
-import axios from '../libs/axios'
+import React from "react";
+import {SWRConfig} from "swr";
+import axios from "../libs/axios";
 
 function fetcher(url) {
-  return axios.get(url).then(({data}) => data)
+  return axios.get(url).then(({data}) => data);
 }
 
 function Config({children}) {
@@ -11,12 +11,12 @@ function Config({children}) {
     <SWRConfig
       value={{
         revalidateOnFocus: false,
-        fetcher,
+        fetcher
       }}
     >
       {children}
     </SWRConfig>
-  )
+  );
 }
 
-export default Config
+export default Config;

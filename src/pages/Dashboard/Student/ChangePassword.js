@@ -1,50 +1,50 @@
-import React from 'react'
-import {object, string} from 'yup'
-import {useForm} from 'react-hook-form'
-import useError from '../../../hooks/useError'
-import useAsyncError from '../../../hooks/useAsyncError'
-import Layout from '../../../layout'
-import Input from '../../../components/Input'
-import Seo from '../../../components/Seo'
-import {BackButton, ButtonBlock} from '../../../components/Button'
-import {Container, Title, Form, ErrorMessage} from '../../../components/Form'
-import axios from '../../../libs/axios'
+import React from "react";
+import {object, string} from "yup";
+import {useForm} from "react-hook-form";
+import useError from "../../../hooks/useError";
+import useAsyncError from "../../../hooks/useAsyncError";
+import Layout from "../../../layout";
+import Input from "../../../components/Input";
+import Seo from "../../../components/Seo";
+import {BackButton, ButtonBlock} from "../../../components/Button";
+import {Container, Title, Form, ErrorMessage} from "../../../components/Form";
+import axios from "../../../libs/axios";
 
 const validationSchema = object().shape({
   oldPassword: string()
     .min(8, ({min}) => {
-      return `Password lama minimal mengandung ${min} karakter`
+      return `Password lama minimal mengandung ${min} karakter`;
     })
-    .required('Password lama harus diisi'),
+    .required("Password lama harus diisi"),
   newPassword: string()
     .min(8, ({min}) => {
-      return `Password baru minimal mengandung ${min} karakter`
+      return `Password baru minimal mengandung ${min} karakter`;
     })
-    .required('Password baru harus diisi'),
-})
+    .required("Password baru harus diisi")
+});
 
 function ChangePassword({id, fullname, history}) {
   const {handleSubmit, register, errors, formState} = useForm({
-    reValidateMode: 'onSubmit',
-    validationSchema,
-  })
-  const {errorMessage, setError} = useError(errors)
-  const setAsyncError = useAsyncError()
-  const {isSubmitting} = formState
+    reValidateMode: "onSubmit",
+    validationSchema
+  });
+  const {errorMessage, setError} = useError(errors);
+  const setAsyncError = useAsyncError();
+  const {isSubmitting} = formState;
 
-  const onSubmit = async (formData) => {
+  const onSubmit = async formData => {
     try {
-      await axios.post(`/students/${id}/password`, formData)
-      history.push('/profile', {status: 1})
+      await axios.post(`/students/${id}/password`, formData);
+      history.push("/profile", {status: 1});
     } catch (err) {
       if (err.response) {
-        setError(err.response.data.message)
-        return
+        setError(err.response.data.message);
+        return;
       }
 
-      setAsyncError(err)
+      setAsyncError(err);
     }
-  }
+  };
 
   return (
     <Layout>
@@ -70,7 +70,7 @@ function ChangePassword({id, fullname, history}) {
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </Container>
     </Layout>
-  )
+  );
 }
 
-export default ChangePassword
+export default ChangePassword;

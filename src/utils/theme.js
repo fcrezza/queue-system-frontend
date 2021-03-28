@@ -1,31 +1,29 @@
-import React from 'react'
+import React from "react";
 import {
   ThemeProvider as StyledThemeProvider,
-  createGlobalStyle,
-} from 'styled-components'
-import colorScheme from './colorScheme'
-import 'typeface-montserrat'
+  createGlobalStyle
+} from "styled-components";
+import colorScheme from "./colorScheme";
+import "typeface-montserrat";
 
 const GlobalStyle = createGlobalStyle`
 	*,
 	*::before,
 	*::after {
-		font-size: 10px;
-		font-family: 'Montserrat', sans-serif;
 		box-sizing: border-box;
+		font-size: 10px;
 	}
 
 	body {
-		margin: 0;
-		line-height: 1.5;
+		font-family: 'Montserrat', sans-serif;
 		background: ${({theme}) => theme.background};
 	}
-`
+`;
 
 function ThemeProvider({children}) {
   return (
     <StyledThemeProvider theme={colorScheme}>{children}</StyledThemeProvider>
-  )
+  );
 }
 
-export {GlobalStyle, ThemeProvider}
+export {GlobalStyle, ThemeProvider};

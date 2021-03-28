@@ -1,9 +1,9 @@
-import React from 'react'
-import {BrowserRouter, Route, Switch} from 'react-router-dom'
-import LandingPage from '../pages/LandingPage'
-import Login from '../pages/Login'
-import Signup from '../pages/Signup'
-import NotFound from '../pages/NotFound'
+import React from "react";
+import {BrowserRouter, Route, Switch} from "react-router-dom";
+import LandingPage from "../pages/LandingPage";
+import Login from "../pages/Login";
+import Signup from "../pages/Signup";
+import NotFound from "../pages/NotFound";
 
 function UnauthenticatedRoute() {
   return (
@@ -15,7 +15,7 @@ function UnauthenticatedRoute() {
         <Route component={NotFound} />
       </Switch>
     </BrowserRouter>
-  )
+  );
 }
 
-export default UnauthenticatedRoute
+export default UnauthenticatedRoute;
