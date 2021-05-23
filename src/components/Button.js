@@ -38,11 +38,12 @@ const StyledButton = styled(BaseButton)`
   color: ${({theme}) => theme.secondary};
   padding: ${({size}) => (size === "small" ? ".8rem 1rem" : "1.2rem 1.6rem")};
   font-size: ${({size}) => (size === "small" ? "1.2rem" : "1.5rem")};
-  display: ${({block}) => (block ? "block" : "inline-block")};
+  display: ${({block}) => (block === "true" ? "block" : "inline-block")};
   font-weight: 700;
   background: ${({disabled, theme}) =>
     disabled ? theme.primaryLight : theme.primary};
   cursor: ${({disabled}) => (disabled ? "default" : "pointer")};
+  text-transform: capitalize;
 
   &:hover,
   &:focus,
@@ -59,6 +60,10 @@ const StyledIconButton = styled(BaseButton)`
   * {
     display: block;
   }
+`;
+
+const BackButtonContainer = styled.div`
+  margin-left: -6px;
 `;
 
 export function Button(props) {
@@ -91,9 +96,11 @@ export function BackButton() {
   const handleClick = length > 2 ? goBack : () => push("/");
 
   return (
-    <IconButton onClick={handleClick}>
-      <BackArrow />
-    </IconButton>
+    <BackButtonContainer>
+      <IconButton onClick={handleClick}>
+        <BackArrow />
+      </IconButton>
+    </BackButtonContainer>
   );
 }
 

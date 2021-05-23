@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {Route, Switch} from "react-router-dom";
-import {useAuth} from "../../../context/AuthContext";
+import {useAuth} from "../../../utils/auth";
 import Home from "./Home";
 import Profile from "./Profile";
 import ChangePassword from "./ChangePassword";
@@ -9,7 +9,7 @@ import StudentProfile from "./StudentProfile";
 import StudentList from "./StudentList";
 import NotFound from "../../NotFound";
 import Queue from "./Queue";
-import {useSocket} from "../../../context/SocketContext";
+import {useSocket} from "../../../utils/socket";
 
 function ProfessorDashboard({match}) {
   const {user} = useAuth();

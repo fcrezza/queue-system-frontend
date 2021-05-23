@@ -11,7 +11,7 @@ import Spinner from "../../../components/Spinner";
 import Seo from "../../../components/Seo";
 import {BackButton, ButtonBlock} from "../../../components/Button";
 import {Container, Title, Form, ErrorMessage} from "../../../components/Form";
-import axios from "../../../libs/axios";
+import axios from "../../../utils/axios";
 
 const validationSchema = object().shape({
   nim: number()

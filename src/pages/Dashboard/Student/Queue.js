@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import styled from "styled-components";
-import {useSocket} from "../../../context/SocketContext";
+import {useSocket} from "../../../utils/socket";
 import Layout from "../../../layout";
 import Seo from "../../../components/Seo";
 import Devider from "../../../components/Devider";

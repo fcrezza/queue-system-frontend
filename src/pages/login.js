@@ -5,12 +5,13 @@ import {object, string} from "yup";
 
 import Seo from "../components/Seo";
 import ErrorMessage from "../components/ErrorMessage";
+import Label from "../components/Label";
 import Layout from "../layout";
 import Radio, {RadioGroup} from "../components/Radio";
 import {InputV2, InputGroup, InputRightElement} from "../components/Input";
 import {EyeClose, EyeOpen} from "../components/Icon";
-import {Button, BackButton, IconButton} from "../components/Button";
-import {useAuth} from "../context/AuthContext";
+import {BackButton, Button, IconButton} from "../components/Button";
+import {useAuth} from "../utils/auth";
 
 const Title = styled.h1`
   font-size: 2.5rem;
@@ -21,27 +22,26 @@ const Title = styled.h1`
 
 const Container = styled.div`
   margin-top: 4rem;
-
-  & > ${ErrorMessage} {
-    margin-top: 3rem;
-  }
 `;
 
-const Form = styled.form`
-  & > *:not(:last-child) {
-    margin-bottom: 3.5rem;
-  }
+const Form = styled.form``;
+
+const ErrorMessageWrapper = styled.div`
+  margin: 2rem 0;
+  height: 1rem;
 `;
 
 const validationSchema = object().shape({
   role: string().required("Pilih salah satu role"),
-  username: string().required("Username tidak boleh kosong"),
+  email: string()
+    .email("Alamat email tidak valid")
+    .required("Email tidak boleh kosong"),
   password: string()
     .required("Password tidak boleh kosong")
     .min(8, state => `Password minimal mengandung ${state.min} karakter`)
 });
 
-function Loginpage({history}) {
+function Login({history}) {
   const {login} = useAuth();
   const {errors, handleSubmit, register, setError, formState} = useForm({
     validationSchema,
@@ -53,12 +53,12 @@ function Loginpage({history}) {
     e.preventDefault();
     try {
       await login(data);
-      history.push("/");
+      history.push("/home");
     } catch (error) {
       if (error.response) {
         setError("server", {
           type: "server",
-          message: error.response.data.message
+          message: error.response.data.error.message
         });
         return;
       }
@@ -72,7 +72,7 @@ function Loginpage({history}) {
 
   return (
     <Layout>
-      <Seo title="Login | UNIQUEUE" />
+      <Seo title="Masuk | UNIQUEUE" />
       <BackButton />
       <Container>
         <Title>Masuk sebagai</Title>
@@ -92,13 +92,27 @@ function Loginpage({history}) {
               ref={register}
             />
           </RadioGroup>
-          <InputV2 placeholder="Username" name="username" ref={register} />
+          <ErrorMessageWrapper>
+            <ErrorMessage>{errors?.role?.message}</ErrorMessage>
+          </ErrorMessageWrapper>
+          <Label id="email">Email</Label>
+          <InputV2
+            id="email"
+            name="email"
+            ref={register}
+            error={errors.email}
+          />
+          <ErrorMessageWrapper>
+            <ErrorMessage>{errors?.email?.message}</ErrorMessage>
+          </ErrorMessageWrapper>
+          <Label id="password">Password</Label>
           <InputGroup>
             <InputV2
-              placeholder="Password"
+              id="password"
               type={isPasswordVisible ? "text" : "password"}
               name="password"
               ref={register}
+              error={errors.password}
             />
             <InputRightElement>
               <IconButton
@@ -112,19 +126,19 @@ function Loginpage({history}) {
               </IconButton>
             </InputRightElement>
           </InputGroup>
+          <ErrorMessageWrapper>
+            <ErrorMessage>{errors?.password?.message}</ErrorMessage>
+          </ErrorMessageWrapper>
           <Button type="submit" disabled={formState.isSubmitting}>
             Masuk
           </Button>
         </Form>
-        {Object.keys(errors).length ? (
-          <ErrorMessage>
-            {errors[Object.keys(errors)[0]].message ||
-              errors[Object.keys(errors)[0]].types.message}
-          </ErrorMessage>
-        ) : null}
+        <ErrorMessageWrapper>
+          <ErrorMessage>{errors?.server?.types?.message}</ErrorMessage>
+        </ErrorMessageWrapper>
       </Container>
     </Layout>
   );
 }
 
-export default Loginpage;
+export default Login;

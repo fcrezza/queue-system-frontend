@@ -1,72 +1,59 @@
 import React, {useRef} from "react";
-import {Switch, Route} from "react-router-dom";
-import {useAuth} from "../../context/AuthContext";
-import Step1 from "./Step1";
-import Step2 from "./Step2/index";
-import Step3 from "./Step3";
+import {Switch, Route, useHistory, useRouteMatch} from "react-router-dom";
 
-function Signup({match, history}) {
+import {useAuth} from "../../utils/auth";
+import Auth from "./auth";
+import AccountDetails from "./accountdetails";
+import ChooseProfessor from "./chooseprofessor";
+import NotFound from "../notfound";
+
+function Signup() {
   const {signup} = useAuth();
-  const cacheFormData = useRef(
-    JSON.parse(sessionStorage.getItem("formData")) || {}
-  );
+  const history = useHistory();
+  const match = useRouteMatch();
+  const formData = useRef(JSON.parse(sessionStorage.getItem("formData")) || {});
 
-  const nextStep = (formData, step) => {
-    if (formData.role && cacheFormData.current.role !== formData.role) {
-      cacheFormData.current = {
-        ...formData
+  const nextStep = (data, step) => {
+    if (formData.current.role && formData.current.role !== data.role) {
+      formData.current = {
+        ...data
       };
     } else {
-      cacheFormData.current = {
-        ...cacheFormData.current,
-        ...formData
+      formData.current = {
+        ...formData.current,
+        ...data
       };
     }
 
-    sessionStorage.setItem("formData", JSON.stringify(cacheFormData.current));
-    history.push(`${match.url}/step-${step}`);
+    sessionStorage.setItem("formData", JSON.stringify(formData.current));
+    history.push(`${match.url}/${step}`);
   };
-  const sendData = async (formData, callback) => {
-    cacheFormData.current = {
-      ...cacheFormData.current,
-      ...formData
-    };
-    await signup(cacheFormData.current, callback);
+
+  const sendData = async data => {
+    await signup(data);
     sessionStorage.removeItem("formData");
-    cacheFormData.current = {};
+    formData.current = {};
   };
 
   return (
-    <div>
-      <Switch>
-        <Route
-          path={`${match.path}/step-3`}
-          render={routerProps => (
-            <Step3
-              cacheFormData={cacheFormData.current}
-              sendData={sendData}
-              {...routerProps}
-            />
-          )}
+    <Switch>
+      <Route exact path={match.path}>
+        <Auth formData={formData.current} nextStep={nextStep} />
+      </Route>
+      <Route exact path={`${match.path}/account-details`}>
+        <AccountDetails
+          formData={formData.current}
+          sendData={sendData}
+          nextStep={nextStep}
         />
-        <Route
-          path={`${match.path}/step-2`}
-          render={() => (
-            <Step2
-              cacheFormData={cacheFormData.current}
-              sendData={sendData}
-              nextStep={nextStep}
-            />
-          )}
-        />
-        <Route
-          path={match.path}
-          render={() => (
-            <Step1 cacheFormData={cacheFormData.current} nextStep={nextStep} />
-          )}
-        />
-      </Switch>
-    </div>
+      </Route>
+      <Route exact path={`${match.path}/choose-professor`}>
+        <ChooseProfessor formData={formData.current} sendData={sendData} />
+      </Route>
+      <Route>
+        <NotFound />
+      </Route>
+    </Switch>
   );
 }
 

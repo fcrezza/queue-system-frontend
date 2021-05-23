@@ -1,10 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import {Link as RouterLink} from "react-router-dom";
+
 import Layout from "../layout";
 import Seo from "../components/Seo";
 import {Button} from "../components/Button";
-import NotFoundSVG from "../images/404.svg";
+import NotFoundSVG from "../assets/vectors/not_found.svg";
 
 const Container = styled.div`
   display: flex;
@@ -12,16 +13,15 @@ const Container = styled.div`
   align-items: center;
   text-align: center;
 `;
+
 const Link = styled(RouterLink)`
   text-decoration: none;
   margin-top: 2rem;
 `;
 
-const Illustration = styled.img.attrs({
-  src: NotFoundSVG
-})`
+const Illustration = styled.img`
   width: 100%;
-  min-width: 300px;
+  height: auto;
 `;
 
 const Title = styled.h2`
@@ -39,12 +39,17 @@ const Text = styled.p`
 function NotFound() {
   return (
     <Layout>
-      <Seo title="404 | Halaman Tidak Dapat Ditemukan" />
+      <Seo title="404 - Halaman Tidak Dapat Ditemukan | UNIQUEUE" />
       <Container>
-        <Illustration />
+        <Illustration
+          src={NotFoundSVG}
+          alt="not found image"
+          width="300"
+          height="500"
+        />
         <Title>HALAMAN TIDAK DAPAT DITEMUKAN</Title>
         <Text>Apakah url yang dimasukan benar?</Text>
-        <Text>Halaman saat ini mengkin tidak tersedia</Text>
+        <Text>Halaman mengkin tidak tersedia untuk saat ini</Text>
         <Button as={Link} to="/">
           Kembali ke halaman utama
         </Button>

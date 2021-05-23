@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import styled from "styled-components";
 import {Link as RouterLink} from "react-router-dom";
-import {useSocket} from "../../../context/SocketContext";
+import {useSocket} from "../../../utils/socket";
 import Layout from "../../../layout";
 import Spinner from "../../../components/Spinner";
 import Seo from "../../../components/Seo";

@@ -1,3 +1,5 @@
+// TODO: this file should be deleted
+
 import React from "react";
 import styled from "styled-components";
 
@@ -60,34 +62,5 @@ const CardButton = styled.button`
   cursor: pointer;
   margin-left: auto;
 `;
-
-function Container({children}) {
-  return <CardContainer>{children}</CardContainer>;
-}
-
-function Avatar({src, alt}) {
-  return (
-    <AvatarContainer>
-      <CardAvatar src={src} alt={alt} />
-    </AvatarContainer>
-  );
-}
-
-function Content({fullname, study}) {
-  return (
-    <ContentContainer>
-      <ContentHeading>{fullname}</ContentHeading>
-      <ContentText>{study}</ContentText>
-    </ContentContainer>
-  );
-}
-
-function Button({onClick, children, ...props}) {
-  return (
-    <CardButton onClick={onClick} {...props}>
-      {children}
-    </CardButton>
-  );
-}
 
 export {Container, Content, Avatar, Button};

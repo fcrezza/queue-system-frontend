@@ -1,6 +1,6 @@
 import React from "react";
 import {SWRConfig} from "swr";
-import axios from "../libs/axios";
+import axios from "./axios";
 
 function fetcher(url) {
   return axios.get(url).then(({data}) => data);

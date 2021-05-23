@@ -4,7 +4,7 @@ import {
   createGlobalStyle
 } from "styled-components";
 import "normalize.css";
-import "typeface-montserrat";
+import "typeface-poppins";
 
 import colorScheme from "./colorScheme";
 
@@ -17,7 +17,7 @@ const GlobalStyle = createGlobalStyle`
 	}
 
 	body {
-		font-family: 'Montserrat', sans-serif;
+		font-family: 'Poppins', sans-serif;
 		background: ${({theme}) => theme.background};
 	}
 `;

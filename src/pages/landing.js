@@ -7,15 +7,14 @@ import Seo from "../components/Seo";
 import {Button} from "../components/Button";
 import ilustrationSVG from "../images/ilustration.svg";
 
-const Ilustration = styled.img`
-  width: 80%;
-  min-width: 250px;
-  height: 300px;
+export const Ilustration = styled.img`
+  width: 100%;
+  height: auto;
   display: block;
   margin: 0 auto;
 `;
 
-const Title = styled.h1`
+export const Title = styled.h1`
   font-size: 2.5rem;
   font-weight: 900;
   margin: 3rem 0 1.5rem;
@@ -23,14 +22,14 @@ const Title = styled.h1`
   text-transform: capitalize;
 `;
 
-const Subtitle = styled.p`
+export const Subtitle = styled.p`
   color: ${({theme}) => theme.primaryLight};
   font-size: 1.6rem;
   margin: 0;
   text-transform: capitalize;
 `;
 
-const ButtonGroup = styled.div`
+export const ButtonGroup = styled.div`
   margin-top: 4rem;
 
   a:first-child {
@@ -38,15 +37,20 @@ const ButtonGroup = styled.div`
   }
 `;
 
-const Link = styled(RouterLink)`
+export const Link = styled(RouterLink)`
   text-decoration: none;
 `;
 
-function HomePage() {
+function Landing() {
   return (
     <Layout>
       <Seo />
-      <Ilustration src={ilustrationSVG} alt="" />
+      <Ilustration
+        src={ilustrationSVG}
+        alt="ilustration image"
+        width="250"
+        height="300"
+      />
       <Title>Bimbingan tidak perlu ribet.</Title>
       <Subtitle>Mulai bimbingan dengan sekali tap, yup semudah itu!</Subtitle>
       <ButtonGroup>
@@ -61,4 +65,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default Landing;

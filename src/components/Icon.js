@@ -55,3 +55,27 @@ export function EyeOpen({width, height}) {
     </svg>
   );
 }
+
+export function RightArrow({width, height, color}) {
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 20 20"
+      fill={color}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g clipPath="url(#clip0)">
+        <path
+          d="M21 9.29481L12.7052 17.5896L11.9119 16.7963L18.8492 9.85896H3V8.73066H18.8492L11.9119 1.79334L12.7052 1L21 9.29481Z"
+          fill="fill"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0">
+          <rect width="20" height="20" fill="fill" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+}

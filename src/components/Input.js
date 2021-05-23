@@ -63,13 +63,18 @@ const StyledInput = styled.input`
   background: ${({theme}) => theme.gray};
   outline: 0;
   transition: background 0.2s;
+  box-shadow: ${({theme, error}) =>
+    error ? `0 0 0 3px ${lighten(0.1, theme.error)}` : null};
 
   &:hover {
     background: ${({theme}) => darken(0.025, theme.gray)};
   }
 
   &:focus {
-    box-shadow: ${({theme}) => `0 0 0 3px ${lighten(0.5, theme.primary)}`};
+    box-shadow: ${({theme, error}) =>
+      error
+        ? `0 0 0 3px ${lighten(0.1, theme.error)}`
+        : `0 0 0 3px ${lighten(0.5, theme.primary)}`};
   }
 `;
 
@@ -95,7 +100,7 @@ const StyledInputGroup = styled.div`
 `;
 
 export const InputV2 = React.forwardRef((props, ref) => {
-  const {placeholder, type, onChange, value, name, ...rest} = props;
+  const {placeholder, type, onChange, value, name, error, ...rest} = props;
 
   return (
     <StyledInput
@@ -106,6 +111,7 @@ export const InputV2 = React.forwardRef((props, ref) => {
       name={name}
       placeholder={placeholder}
       ref={ref}
+      error={error}
       {...rest}
     />
   );

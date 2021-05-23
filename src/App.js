@@ -1,49 +1,42 @@
 import React from "react";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 
-import {useAuth} from "./context/AuthContext";
-import {SocketProvider} from "./context/SocketContext";
-import LandingPage from "./pages/LandingPage";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import NotFound from "./pages/NotFound";
-import StudentDashboard from "./pages/Dashboard/Student";
-import ProfessorDashboard from "./pages/Dashboard/Professor";
+import Landing from "./pages/landing";
+import Login from "./pages/login";
+import Signup from "./pages/signup";
+import NotFound from "./pages/notfound";
+import Home from "./pages/home";
+import {AuthenticatedRoute, UnAuthenticatedRoute} from "./components/Routes";
 
 function App() {
-  const {user} = useAuth();
-
   return (
     <BrowserRouter>
       <Switch>
-        {user ? (
-          <AuthenticatedRoute role={user.role} />
-        ) : (
-          <UnAuthenticatedRoute />
-        )}
-        <Route component={NotFound} />
+        <Route exact path="/">
+          <UnAuthenticatedRoute>
+            <Landing />
+          </UnAuthenticatedRoute>
+        </Route>
+        <Route exact path="/login">
+          <UnAuthenticatedRoute>
+            <Login />
+          </UnAuthenticatedRoute>
+        </Route>
+        <Route path="/signup">
+          <UnAuthenticatedRoute>
+            <Signup />
+          </UnAuthenticatedRoute>
+        </Route>
+        <Route path="/home">
+          <AuthenticatedRoute>
+            <Home />
+          </AuthenticatedRoute>
+        </Route>
+        <Route>
+          <NotFound />
+        </Route>
       </Switch>
     </BrowserRouter>
-  );
-}
-
-function AuthenticatedRoute({role}) {
-  const dashboard = role === "student" ? StudentDashboard : ProfessorDashboard;
-
-  return (
-    <SocketProvider>
-      <Route exact path="/" component={dashboard} />
-    </SocketProvider>
-  );
-}
-
-function UnAuthenticatedRoute() {
-  return (
-    <>
-      <Route exact path="/" component={LandingPage} />
-      <Route exact path="/login" component={Login} />
-      <Route exact path="/signup" component={Signup} />
-    </>
   );
 }
 

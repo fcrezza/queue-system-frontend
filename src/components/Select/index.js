@@ -1,63 +1,15 @@
 import React from "react";
-import styled from "styled-components";
 import {useSelect} from "downshift";
 
-const SelectContainer = styled.div`
-  background: ${({theme}) => theme.gray};
-  border-bottom: ${({theme}) => `2px solid ${theme.primaryLight}`};
-`;
-
-const Label = styled.label`
-  width: 100%;
-  padding: 0.8rem 0 0 1rem;
-  font-size: 1.3rem;
-  color: ${({theme}) => theme.primaryLight};
-  display: block;
-`;
-
-const SelectButton = styled.button`
-  padding-left: 1rem;
-  width: 100%;
-  height: 3.5rem;
-  border: 0;
-  text-align: left;
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  outline: none;
-`;
-
-const Menu = styled.div`
-  position: relative;
-`;
-
-const ItemsContainer = styled.div`
-  background: ${({theme}) => theme.secondaryLight};
-  position: absolute;
-  width: 100%;
-  max-height: 150px;
-  overflow-y: auto;
-  top: 100%;
-  box-shadow: ${({theme}) => `0px 0px 20px ${theme.solidGray}`};
-`;
-
-const Item = styled.div`
-  padding: 1.5rem 1rem;
-  font-size: 1.4rem;
-  background: ${({isSelected, theme}) => (isSelected ? theme.skyBlue : null)};
-
-  &:not(:last-child) {
-    border-bottom: ${({theme}) => `.1px solid ${theme.solidGray}`};
-  }
-`;
-
-const ButtonText = styled.div`
-  font-size: 1.8rem;
-  color: ${({theme}) => theme.primary};
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-overflow: hidden;
-`;
+import Label from "../Label";
+import {
+  SelectContainer,
+  SelectButton,
+  ButtonText,
+  Menu,
+  ItemsContainer,
+  Item
+} from "./utils";
 
 function Select({items, name, defaultValue, placeholder, setValue}) {
   const {
@@ -137,6 +89,48 @@ export function ControlledSelect(props) {
                 {...getItemProps({item, index})}
               >
                 {item.nama}
+              </Item>
+            ))}
+        </ItemsContainer>
+      </Menu>
+    </SelectContainer>
+  );
+}
+
+export function SelectV2(props) {
+  const {onChange, value, items, label, error} = props;
+  const {
+    isOpen,
+    selectedItem,
+    getToggleButtonProps,
+    getLabelProps,
+    getMenuProps,
+    highlightedIndex,
+    getItemProps
+  } = useSelect({
+    items,
+    initialSelectedItem: value,
+    itemToString: item => (item ? item.name : ""),
+    onSelectedItemChange: change => onChange(change.selectedItem)
+  });
+
+  return (
+    <SelectContainer>
+      <Label {...getLabelProps()}>{label}</Label>
+      <SelectButton {...getToggleButtonProps({error})} type="button">
+        <ButtonText>{selectedItem ? selectedItem.name : ""}</ButtonText>
+        <ButtonText>▾</ButtonText>
+      </SelectButton>
+      <Menu {...getMenuProps()}>
+        <ItemsContainer>
+          {isOpen &&
+            items.map((item, index) => (
+              <Item
+                isSelected={highlightedIndex === index}
+                key={[item.name, index].join("-")}
+                {...getItemProps({item, index})}
+              >
+                {item.name}
               </Item>
             ))}
         </ItemsContainer>

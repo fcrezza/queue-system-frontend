@@ -3,7 +3,7 @@ import styled from "styled-components";
 import {useHistory, Link} from "react-router-dom";
 import {BackButton, LogoutButton} from "../Button";
 import OverlayScrollbar from "./OverlayScrollbar";
-import {useAuth} from "../../context/AuthContext";
+import {useAuth} from "../../utils/auth";
 
 const BodyContainer = styled.div`
   margin: 3rem 0 4rem;

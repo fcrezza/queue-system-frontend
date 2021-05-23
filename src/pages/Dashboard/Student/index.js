@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import useSWR from "swr";
 import {Route, Switch} from "react-router-dom";
-import {useSocket} from "../../../context/SocketContext";
+import {useSocket} from "../../../utils/socket";
 import Home from "./Home";
 import Queue from "./Queue";
 import Profile from "./Profile";
@@ -10,7 +10,7 @@ import ChangePassword from "./ChangePassword";
 import NotFound from "../../NotFound";
 import Professor from "./Professor";
 import Spinner from "../../../components/Spinner";
-import {useAuth} from "../../../context/AuthContext";
+import {useAuth} from "../../../utils/auth";
 import useAsyncError from "../../../hooks/useAsyncError";
 
 function StudentDashboard({match}) {
